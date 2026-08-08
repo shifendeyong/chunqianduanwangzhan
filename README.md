@@ -1,2 +1,0 @@
-# chunqianduanwangzhan
-这里有我用Ai生成的纯前端网站
