@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>世界盒子 · 生物修改</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link href="https://cdn.staticfile.net/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #4b5563 #1e1e1e
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+            border-radius: 4px
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px
+        }
+        body {
+            background: #121212;
+            color: #e5e5e5;
+            font-family: system-ui, -apple-system, 'Inter', 'Segoe UI', sans-serif;
+            padding-bottom: env(safe-area-inset-bottom)
+        }
+        .card {
+            background: #1e1e1e;
+            border-radius: 1rem;
+            border: 1px solid #2d2d2d;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: transform .2s, box-shadow .2s;
+            margin-bottom: 1.5rem;
+            overflow: hidden
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+            border-color: #3b82f6
+        }
+        .custom-input {
+            width: 100%;
+            padding: .75rem 1rem .75rem 2.5rem;
+            background-color: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .75rem;
+            outline: none;
+            transition: all .2s;
+            font-size: 1rem;
+            color: #f0f0f0
+        }
+        .custom-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background-color: #1a1a1a
+        }
+        .custom-input-sm {
+            padding: .5rem .75rem;
+            font-size: .875rem
+        }
+        .file-upload-wrapper {
+            position: relative;
+            width: 100%;
+            height: 130px;
+            border: 2px dashed #374151;
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            background-color: #0f0f1a
+        }
+        .file-upload-wrapper:hover {
+            border-color: #3b82f6;
+            background-color: #1e293b;
+            transform: scale(.99)
+        }
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer
+        }
+        .btn-primary {
+            background: linear-gradient(105deg, #2563eb, #1d4ed8);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all .2s
+        }
+        .btn-primary:hover {
+            background: linear-gradient(105deg, #3b82f6, #2563eb);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4)
+        }
+        .btn-success {
+            background: linear-gradient(105deg, #059669, #047857);
+            transition: all .2s
+        }
+        .btn-success:hover {
+            background: linear-gradient(105deg, #10b981, #059669);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3)
+        }
+        .btn-secondary {
+            background: linear-gradient(105deg, #4b5563, #374151);
+            transition: all .2s
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(105deg, #6b7280, #4b5563);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3)
+        }
+        .btn-danger {
+            background: linear-gradient(105deg, #dc2626, #b91c1c);
+            transition: all .2s
+        }
+        .btn-danger:hover {
+            background: linear-gradient(105deg, #ef4444, #dc2626);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3)
+        }
+        button:active {
+            transform: scale(.97)
+        }
+        .badge-version {
+            background: rgba(59, 130, 246, 0.2);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(59, 130, 246, 0.4)
+        }
+        .status-message {
+            background: #1e1e2f;
+            border-left: 4px solid;
+            border-radius: .75rem;
+            padding: .75rem 1rem;
+            font-size: .85rem;
+            display: none;
+            margin-bottom: 1rem
+        }
+        .status-message.success {
+            border-left-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            color: #a7f3d0
+        }
+        .status-message.error {
+            border-left-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            color: #fecaca
+        }
+        .status-message.warning {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+            color: #fed7aa
+        }
+        .status-message.info {
+            border-left-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+            color: #93c5fd
+        }
+        .fade-in {
+            animation: fadeInUp .3s cubic-bezier(0.2, 0.9, 0.4, 1.1)
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+        .actor-card {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: .75rem;
+            padding: .6rem .75rem;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            gap: .5rem
+        }
+        .actor-card:hover {
+            border-color: #3b82f6;
+            background: #1a1a2a
+        }
+        .actor-card.active {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.12);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.08)
+        }
+        .actor-card .card-content {
+            flex: 1;
+            min-width: 0
+        }
+        .actor-list-container {
+            max-height: calc(100vh - 420px);
+            min-height: 200px;
+            overflow-y: auto
+        }
+        .form-input {
+            width: 100%;
+            padding: .6rem .9rem;
+            background-color: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .75rem;
+            outline: none;
+            transition: all .2s;
+            font-size: .9rem;
+            color: #f0f0f0
+        }
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background-color: #1a1a1a
+        }
+        .form-select {
+            width: 100%;
+            padding: .6rem .9rem;
+            background-color: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .75rem;
+            outline: none;
+            transition: all .2s;
+            font-size: .9rem;
+            color: #f0f0f0;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right .75rem center;
+            background-repeat: no-repeat;
+            background-size: 1.2rem
+        }
+        .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background-color: #1a1a1a
+        }
+        .form-label {
+            display: block;
+            font-size: .8rem;
+            font-weight: 500;
+            color: #9ca3af;
+            margin-bottom: .3rem
+        }
+        .empty-state {
+            color: #6b7280;
+            text-align: center;
+            padding: 2.5rem 1rem
+        }
+        .empty-state i {
+            font-size: 2.5rem;
+            opacity: .3;
+            display: block;
+            margin-bottom: .75rem
+        }
+        .hidden {
+            display: none !important
+        }
+        .sort-bar {
+            display: flex;
+            gap: .5rem;
+            align-items: center;
+            margin-bottom: .5rem;
+            flex-wrap: wrap
+        }
+        .sort-bar label {
+            font-size: .75rem;
+            color: #9ca3af
+        }
+        .sort-bar select {
+            background: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .4rem;
+            padding: .2rem .5rem;
+            color: #f0f0f0;
+            font-size: .8rem;
+            outline: none
+        }
+        .sort-bar select:focus {
+            border-color: #3b82f6
+        }
+        .actor-field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: .5rem
+        }
+        .actor-field-grid .field {
+            display: flex;
+            flex-direction: column
+        }
+        .actor-field-grid .field label {
+            font-size: .65rem;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+        .actor-field-grid .field .input-row {
+            display: flex;
+            gap: .3rem;
+            align-items: center
+        }
+        .actor-field-grid .field .input-row input {
+            flex: 1;
+            min-width: 0
+        }
+        .actor-field-grid .field .input-row .btn-sm {
+            padding: .1rem .4rem;
+            font-size: .7rem;
+            border-radius: .3rem;
+            background: #2d2d2d;
+            color: #ccc;
+            border: none;
+            cursor: pointer;
+            transition: .2s;
+            white-space: nowrap;
+            flex-shrink: 0
+        }
+        .actor-field-grid .field .input-row .btn-sm:hover {
+            background: #4b5563
+        }
+        .actor-preview {
+            margin-top: .2rem;
+            font-size: .7rem;
+            color: #9ca3af;
+            background: #0f0f1a;
+            border-radius: .3rem;
+            padding: .2rem .4rem;
+            border: 1px solid #2d2d2d;
+            display: none
+        }
+        .actor-preview.visible {
+            display: block
+        }
+        .actor-preview .label {
+            color: #6b7280
+        }
+        .actor-preview .val {
+            color: #e5e5e5
+        }
+        .trait-item {
+            background: #0f0f1a;
+            border: 1px solid #2d2d2d;
+            border-radius: .5rem;
+            padding: .4rem .6rem;
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+            flex-wrap: wrap;
+            margin-bottom: .3rem
+        }
+        .trait-item select,
+        .trait-item input {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: .4rem;
+            padding: .15rem .3rem;
+            color: #f0f0f0;
+            font-size: .75rem;
+            outline: none
+        }
+        .trait-item select:focus,
+        .trait-item input:focus {
+            border-color: #3b82f6
+        }
+        .trait-item .count-input {
+            width: 2.6rem
+        }
+        .trait-item .btn-sm {
+            padding: .1rem .4rem;
+            font-size: .7rem;
+            border-radius: .3rem;
+            background: #2d2d2d;
+            color: #ccc;
+            border: none;
+            cursor: pointer;
+            transition: .2s
+        }
+        .trait-item .btn-sm:hover {
+            background: #4b5563
+        }
+        .trait-item .btn-sm.danger {
+            background: #7f1d1d
+        }
+        .trait-item .btn-sm.danger:hover {
+            background: #b91c1c
+        }
+        .trait-item .label-tag {
+            font-size: .6rem;
+            color: #6b7280
+        }
+        .item-preview-card {
+            background: #0f0f1a;
+            border: 1px solid #2d2d2d;
+            border-radius: .5rem;
+            padding: .4rem .6rem;
+            margin-top: .3rem;
+            font-size: .75rem;
+            color: #9ca3af
+        }
+        .item-preview-card .label {
+            color: #6b7280;
+            font-size: .65rem
+        }
+        .item-preview-card .val {
+            color: #e5e5e5
+        }
+        .item-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: .2rem;
+            background: #1a1a2a;
+            border: 1px solid #2d2d2d;
+            border-radius: .3rem;
+            padding: .1rem .5rem;
+            font-size: .7rem;
+            color: #93c5fd;
+            cursor: default
+        }
+        .item-tag .remove-item {
+            cursor: pointer;
+            color: #6b7280;
+            font-size: .6rem;
+            margin-left: .2rem
+        }
+        .item-tag .remove-item:hover {
+            color: #ef4444
+        }
+        .history-list {
+            max-height: 120px;
+            overflow-y: auto;
+            background: #0f0f1a;
+            border-radius: .5rem;
+            padding: .25rem
+        }
+        .history-item {
+            padding: .2rem .5rem;
+            font-size: .75rem;
+            border-bottom: 1px solid #262626;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between
+        }
+        .history-item:hover {
+            background: #1a1a2a
+        }
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+            transition: opacity .3s;
+        }
+        .progress-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .progress-box {
+            background: #1e1e2e;
+            border-radius: 1.5rem;
+            padding: 2rem 2.5rem;
+            max-width: 90vw;
+            width: 400px;
+            text-align: center;
+            border: 1px solid #3b82f6;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+        .progress-box .title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #93c5fd;
+            margin-bottom: .5rem;
+        }
+        .progress-box .sub {
+            font-size: .85rem;
+            color: #9ca3af;
+            margin-bottom: 1.2rem;
+        }
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: #2d2d3d;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: .6rem;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 4px;
+            transition: width .15s ease;
+        }
+        .progress-text {
+            font-size: .8rem;
+            color: #6b7280;
+        }
+        .progress-text strong {
+            color: #e5e5e5;
+        }
+        .batch-area {
+            background: #0f0f1a;
+            border-radius: .75rem;
+            padding: .75rem;
+            border: 1px solid #2d2d2d;
+            margin-top: .5rem
+        }
+        .batch-area .grid {
+            gap: .5rem
+        }
+        .batch-area .grid>div {
+            min-width: 0
+        }
+        .tab-nav {
+            display: flex;
+            gap: 0;
+            background: #1a1a1a;
+            border-radius: .75rem;
+            border: 1px solid #2d2d2d;
+            overflow: hidden;
+            margin-bottom: 1.5rem
+        }
+        .tab-nav a {
+            flex: 1;
+            padding: .7rem 1rem;
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            font-size: .9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            border-bottom: 2px solid transparent;
+            text-decoration: none
+        }
+        .tab-nav a:hover {
+            color: #e5e5e5;
+            background: #1e1e2e
+        }
+        .tab-nav a.active {
+            color: #60a5fa;
+            border-bottom-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.08)
+        }
+        .tab-nav a i {
+            font-size: .9rem
+        }
+        .cf-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: .5rem
+        }
+        .cf-grid .field label {
+            font-size: .65rem;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+        .cf-grid .field input {
+            background: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .4rem;
+            padding: .2rem .4rem;
+            color: #f0f0f0;
+            font-size: .8rem;
+            outline: none;
+            width: 100%;
+            transition: .2s
+        }
+        .cf-grid .field input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15)
+        }
+        @media(max-width:768px) {
+            .actor-list-container {
+                max-height: 30vh;
+                min-height: 100px
+            }
+            .actor-card {
+                padding: .5rem .6rem
+            }
+            .card .p-4 {
+                padding: .75rem
+            }
+            .form-label {
+                font-size: .7rem
+            }
+            .actor-field-grid {
+                grid-template-columns: 1fr 1fr
+            }
+            .cf-grid {
+                grid-template-columns: 1fr 1fr
+            }
+            .tab-nav a {
+                font-size: .75rem;
+                padding: .5rem .5rem
+            }
+            .tab-nav a i {
+                font-size: .75rem
+            }
+            .batch-area .grid {
+                grid-template-columns: 1fr 1fr
+            }
+            .progress-box {
+                padding: 1.5rem;
+                width: 90vw;
+            }
+        }
+        @media(max-width:480px) {
+            .actor-field-grid {
+                grid-template-columns: 1fr
+            }
+            .cf-grid {
+                grid-template-columns: 1fr
+            }
+            .tab-nav a {
+                font-size: .65rem;
+                padding: .4rem .3rem;
+                gap: .2rem
+            }
+            .tab-nav a i {
+                font-size: .65rem
+            }
+            .batch-area .grid {
+                grid-template-columns: 1fr
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-gradient-to-r from-slate-900 via-gray-900 to-indigo-900 border-b border-indigo-500/30 sticky top-0 z-50 shadow-2xl backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-dungeon text-indigo-400 text-xl"></i>
+                <div>
+                    <h1 class="text-lg font-bold bg-gradient-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">世界盒子 · 生物修改</h1>
+                    <p class="text-[10px] text-gray-400 hidden xs:block">生物属性 · 特质 · 物品 · 一键修改</p>
+                </div>
+            </div>
+            <div class="badge-version text-xs px-2 py-0.5 rounded-full text-indigo-300 font-mono flex items-center gap-1">
+                <span id="file-badge">未加载</span>
+                <i class="fa-regular fa-circle-check text-emerald-400 hidden" id="loaded-icon"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-2">
+        <div id="statusArea" class="status-message fade-in"></div>
+
+        <div class="tab-nav" id="mainTabs">
+            <a href="武器修改.html"><i class="fa-solid fa-sword"></i> 武器修改</a>
+            <a href="王国与村庄修改.html"><i class="fa-solid fa-crown"></i> 王国与村庄修改</a>
+            <a href="生物修改.html" class="active"><i class="fa-solid fa-user"></i> 生物修改</a>
+        </div>
+
+        <div id="uploadSection" class="card p-4">
+            <div class="flex items-center gap-2 border-b border-gray-800 pb-2 mb-3">
+                <i class="fa-solid fa-cloud-upload-alt text-indigo-400"></i>
+                <h2 class="text-base font-semibold text-indigo-300">上传存档</h2>
+            </div>
+            <div class="file-upload-wrapper" id="dropZone">
+                <input type="file" id="fileInput" accept=".json">
+                <i class="fa-solid fa-file-json text-3xl text-indigo-400/60 mb-1"></i>
+                <p class="text-sm text-gray-400 font-medium" id="fileNameDisplay">点击或拖拽 .json 存档文件至此</p>
+                <p class="text-xs text-gray-500 mt-0.5">世界盒子存档 · 本地处理</p>
+            </div>
+        </div>
+
+        <div id="editorContainer" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+                <div class="lg:col-span-4 card p-3">
+                    <div class="flex items-center gap-2 border-b border-gray-800 pb-2 mb-2">
+                        <i class="fa-solid fa-list-ul text-indigo-400"></i>
+                        <h2 class="text-base font-semibold text-indigo-300">生物列表</h2>
+                        <span class="ml-auto text-xs text-gray-500" id="actorCount">0 个</span>
+                    </div>
+                    <div class="flex gap-2 mb-2 flex-wrap">
+                        <div class="relative flex-1 min-w-[100px]">
+                            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
+                            <input type="text" id="actorSearch" placeholder="搜索..." class="custom-input custom-input-sm pl-8 w-full">
+                        </div>
+                        <select id="actorRaceFilter" class="form-select text-sm flex-1 min-w-[80px]">
+                            <option value="">全部种族</option>
+                        </select>
+                    </div>
+                    <div class="sort-bar">
+                        <label>排序：</label>
+                        <select id="actorSort">
+                            <option value="default">默认顺序</option>
+                            <option value="name">按名称</option>
+                            <option value="id">按ID</option>
+                            <option value="health">按生命</option>
+                        </select>
+                    </div>
+                    <div class="actor-list-container" id="actorList">
+                        <div class="empty-state"><i class="fa-regular fa-user"></i>请上传存档文件</div>
+                    </div>
+                </div>
+                <div class="lg:col-span-8 card p-3">
+                    <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-3 flex-wrap gap-1">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-pen-to-square text-indigo-400"></i>
+                            <h2 class="text-base font-semibold text-indigo-300">生物编辑</h2>
+                        </div>
+                        <div class="flex gap-1">
+                            <button id="actorUndoBtn" class="btn-secondary text-white px-2 py-1 rounded-lg text-xs flex items-center gap-1"><i class="fa-solid fa-rotate-left"></i></button>
+                            <button id="actorHistoryToggle" class="btn-secondary text-white px-2 py-1 rounded-lg text-xs flex items-center gap-1"><i class="fa-regular fa-clock"></i></button>
+                            <button id="downloadBtn" class="btn-success text-white px-3 py-1 rounded-lg text-xs flex items-center gap-1"><i class="fa-solid fa-download"></i>下载</button>
+                        </div>
+                    </div>
+                    <div id="actorHistoryPanel" class="hidden mb-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-400">历史记录 (点击恢复)</span>
+                            <button id="actorClearHistoryBtn" class="text-xs text-red-400 hover:text-red-300">清空</button>
+                        </div>
+                        <div class="history-list" id="actorHistoryList"></div>
+                    </div>
+                    <div id="actorFormEmpty" class="empty-state py-8">
+                        <i class="fa-regular fa-hand-pointer"></i>
+                        <p class="text-sm">请在左侧选择一个生物</p>
+                    </div>
+                    <form id="actorEditForm" class="hidden space-y-2">
+                        <div class="actor-field-grid">
+                            <div class="field"><label>ID</label><input type="number" id="a_id" class="form-input" readonly></div>
+                            <div class="field"><label>名称</label><input type="text" id="a_name" class="form-input" placeholder="名称"></div>
+                            <div class="field"><label>种族</label><input type="text" id="a_asset" class="form-input" placeholder="human"></div>
+                            <div class="field"><label>X</label><input type="number" id="a_x" class="form-input"></div>
+                            <div class="field"><label>Y</label><input type="number" id="a_y" class="form-input"></div>
+                            <div class="field"><label>职业</label><input type="number" id="a_profession" class="form-input"></div>
+                            <div class="field"><label>亚种</label><input type="number" id="a_subspecies" class="form-input"></div>
+                            <div class="field"><label>语言</label><input type="number" id="a_language" class="form-input"></div>
+                            <div class="field"><label>宗教</label><input type="number" id="a_religion" class="form-input"></div>
+                            <div class="field"><label>世代</label><input type="number" id="a_generation" class="form-input"></div>
+                            <div class="field"><label>城市ID</label>
+                                <div class="input-row">
+                                    <input type="number" id="a_cityID" class="form-input" style="flex:1;min-width:0;">
+                                    <button type="button" class="btn-sm lookup-city" data-target="a_cityID"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                </div>
+                                <div class="actor-preview" id="preview_a_cityID"></div>
+                            </div>
+                            <div class="field"><label>王国ID</label>
+                                <div class="input-row">
+                                    <input type="number" id="a_kingdomID" class="form-input" style="flex:1;min-width:0;">
+                                    <button type="button" class="btn-sm lookup-kingdom" data-target="a_kingdomID"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                </div>
+                                <div class="actor-preview" id="preview_a_kingdomID"></div>
+                            </div>
+                            <div class="field"><label>军队</label><input type="number" id="a_army" class="form-input"></div>
+                            <div class="field"><label>情人</label>
+                                <div class="input-row">
+                                    <input type="number" id="a_lover" class="form-input" style="flex:1;min-width:0;">
+                                    <button type="button" class="btn-sm lookup-actor" data-target="a_lover" data-label="情人"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                </div>
+                                <div class="actor-preview" id="preview_a_lover"></div>
+                            </div>
+                            <div class="field"><label>好友</label>
+                                <div class="input-row">
+                                    <input type="number" id="a_bestfriend" class="form-input" style="flex:1;min-width:0;">
+                                    <button type="button" class="btn-sm lookup-actor" data-target="a_bestfriend" data-label="好友"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                </div>
+                                <div class="actor-preview" id="preview_a_bestfriend"></div>
+                            </div>
+                            <div class="field"><label>家庭</label><input type="number" id="a_family" class="form-input"></div>
+                            <div class="field"><label>祖先家庭</label><input type="number" id="a_ancestor" class="form-input"></div>
+                            <div class="field"><label>母亲</label>
+                                <div class="input-row">
+                                    <input type="number" id="a_parent1" class="form-input" style="flex:1;min-width:0;">
+                                    <button type="button" class="btn-sm lookup-actor" data-target="a_parent1" data-label="母亲"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                </div>
+                                <div class="actor-preview" id="preview_a_parent1"></div>
+                            </div>
+                            <div class="field"><label>父亲</label>
+                                <div class="input-row">
+                                    <input type="number" id="a_parent2" class="form-input" style="flex:1;min-width:0;">
+                                    <button type="button" class="btn-sm lookup-actor" data-target="a_parent2" data-label="父亲"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                </div>
+                                <div class="actor-preview" id="preview_a_parent2"></div>
+                            </div>
+                            <div class="field"><label>头部样式</label><input type="number" id="a_head" class="form-input"></div>
+                            <div class="field"><label>表现型索引</label><input type="number" id="a_pheno_idx" class="form-input"></div>
+                            <div class="field"><label>表现型阴影</label><input type="number" id="a_pheno_shade" class="form-input"></div>
+                            <div class="field"><label>年龄增长</label><input type="number" id="a_age_over" class="form-input"></div>
+                            <div class="field"><label>创建时间</label><input type="number" id="a_created" class="form-input" step="0.0001"></div>
+                            <div class="field"><label>性别(0男1女)</label><input type="number" id="a_sex" class="form-input"></div>
+                            <div class="field"><label>氏族</label><input type="number" id="a_clan" class="form-input"></div>
+                        </div>
+                        <hr class="border-gray-700">
+                        <div class="actor-field-grid">
+                            <div class="field"><label>生命</label><input type="number" id="a_health" class="form-input"></div>
+                            <div class="field"><label>耐力</label><input type="number" id="a_stamina" class="form-input"></div>
+                            <div class="field"><label>法力</label><input type="number" id="a_mana" class="form-input"></div>
+                            <div class="field"><label>幸福度</label><input type="number" id="a_happiness" class="form-input"></div>
+                            <div class="field"><label>饥饿</label><input type="number" id="a_nutrition" class="form-input"></div>
+                            <div class="field"><label>金钱</label><input type="number" id="a_money" class="form-input"></div>
+                            <div class="field"><label>击杀</label><input type="number" id="a_kills" class="form-input"></div>
+                            <div class="field"><label>食物消耗</label><input type="number" id="a_food" class="form-input"></div>
+                            <div class="field"><label>出生</label><input type="number" id="a_births" class="form-input"></div>
+                            <div class="field"><label>抢劫</label><input type="number" id="a_loot" class="form-input"></div>
+                            <div class="field"><label>声望</label><input type="number" id="a_renown" class="form-input"></div>
+                            <div class="field"><label>经验</label><input type="number" id="a_experience" class="form-input"></div>
+                            <div class="field"><label>等级</label><input type="number" id="a_level" class="form-input"></div>
+                        </div>
+                        <hr class="border-gray-700">
+                        <div>
+                            <label class="form-label"><i class="fa-solid fa-sliders mr-1"></i>智慧属性 (custom_data_float)</label>
+                            <div class="cf-grid">
+                                <div class="field"><label>外交</label><input type="number" id="cf_diplomacy" class="form-input" step="0.1"></div>
+                                <div class="field"><label>指挥</label><input type="number" id="cf_warfare" class="form-input" step="0.1"></div>
+                                <div class="field"><label>智力</label><input type="number" id="cf_intelligence" class="form-input" step="0.1"></div>
+                                <div class="field"><label>组织</label><input type="number" id="cf_stewardship" class="form-input" step="0.1"></div>
+                            </div>
+                        </div>
+                        <hr class="border-gray-700">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <label class="form-label"><i class="fa-solid fa-tags mr-1"></i>特质 (saved_traits)</label>
+                                <button type="button" id="addTraitBtn" class="btn-secondary text-white px-2 py-0.5 text-xs rounded"><i class="fa-solid fa-plus"></i> 添加</button>
+                            </div>
+                            <div id="traitList" class="space-y-1 mt-1"></div>
+                            <div class="flex gap-1 mt-1 flex-wrap">
+                                <select id="traitSelect" class="form-select text-sm flex-1 min-w-[120px]">
+                                    <option value="dash">投掷</option><option value="block">格挡</option><option value="dodge">闪避</option><option value="backstep">后撤步</option><option value="deflect_projectile">弹射弹幕</option><option value="mute">沉默</option><option value="sunblessed">日耀祝福</option><option value="clumsy">笨拙</option><option value="fragile_health">脆弱生命</option><option value="boosted_vitality">增强活力</option><option value="hard_skin">坚硬皮肤</option><option value="soft_skin">柔软皮肤</option><option value="long_liver">长寿</option><option value="acid_touch">酸蚀触碰</option><option value="acid_blood">酸血</option><option value="acid_proof">抗酸</option><option value="fire_blood">火血</option><option value="fire_proof">抗火</option><option value="freeze_proof">抗冻</option><option value="regeneration">再生</option><option value="heliophobia">怕光症</option><option value="ugly">丑陋</option><option value="fat">肥胖</option><option value="attractive">有魅力</option><option value="fast">快速</option><option value="slow">缓慢</option><option value="gluttonous">贪吃</option><option value="giant">巨大</option><option value="tiny">微小</option><option value="eagle_eyed">鹰眼</option><option value="short_sighted">近视</option><option value="infertile">不育</option><option value="fertile">可育</option><option value="thorns">荆棘</option><option value="bubble_defense">气泡防御</option><option value="immune">免疫</option><option value="agile">敏捷</option><option value="weightless">失重</option><option value="poisonous">有毒</option><option value="venomous">毒液</option><option value="poison_immune">抗毒</option><option value="tough">坚韧</option><option value="strong">强壮</option><option value="weak">虚弱</option><option value="lustful">好色</option><option value="miner">矿工</option><option value="psychopath">变态</option><option value="strong_minded">意志坚强</option><option value="peaceful">和平</option><option value="evil">邪恶</option><option value="hotheaded">急躁</option><option value="thief">小偷</option><option value="stupid">愚蠢</option><option value="genius">天才</option><option value="deceitful">欺诈</option><option value="ambitious">野心勃勃</option><option value="content">满足</option><option value="honest">诚实</option><option value="paranoid">偏执</option><option value="greedy">贪婪</option><option value="chosen_one">天选之子</option><option value="moonchild">月之子</option><option value="nightchild">夜之子</option><option value="flesh_eater">食肉者</option><option value="titan_lungs">泰坦之肺</option><option value="heart_of_wizard">巫师之心</option><option value="battle_reflexes">战斗反射</option><option value="arcane_reflexes">奥术反射</option><option value="healing_aura">治疗光环</option><option value="savage">野蛮</option><option value="immortal">不朽</option><option value="burning_feet">燃烧之足</option><option value="cold_aura">寒冷光环</option><option value="lucky">幸运</option><option value="unlucky">不幸</option><option value="bloodlust">嗜血</option><option value="pacifist">和平主义者</option><option value="veteran">老兵</option><option value="wise">智慧</option><option value="infected">感染</option><option value="mush_spores">蘑菇孢子</option><option value="tumor_infection">肿瘤感染</option><option value="plague">瘟疫</option><option value="blessed">祝福</option><option value="kingslayer">杀王者</option><option value="mageslayer">杀法师者</option><option value="dragonslayer">屠龙者</option><option value="crippled">残疾</option><option value="golden_tooth">金牙</option><option value="eyepatch">眼罩</option><option value="skin_burns">皮肤烧伤</option><option value="super_health">超级生命</option><option value="death_nuke">死亡核弹</option><option value="death_bomb">死亡炸弹</option><option value="death_mark">死亡标记</option><option value="energized">充能</option><option value="mega_heartbeat">巨大心跳</option><option value="bomberman">炸弹人</option><option value="pyromaniac">纵火狂</option><option value="whirlwind">旋风</option><option value="light_lamp">点亮灯</option><option value="shiny">闪亮</option><option value="flower_prints">花纹</option><option value="clone">克隆</option><option value="boat">船</option><option value="scar_of_divinity">神之伤疤</option><option value="miracle_born">奇迹诞生</option><option value="miracle_bearer">奇迹承载者</option><option value="contagious">传染</option><option value="zombie">僵尸</option><option value="madness">疯狂</option><option value="desire_alien_mold">外星霉渴望</option><option value="desire_computer">计算机渴望</option><option value="desire_golden_egg">金蛋渴望</option><option value="desire_harp">竖琴渴望</option>
+                                </select>
+                                <span class="text-[10px] text-gray-500 flex items-center">数量</span>
+                                <input type="number" id="traitCountInput" class="form-input text-sm w-12" min="1" max="99" value="1">
+                                <button type="button" id="addTraitConfirmBtn" class="btn-primary text-white px-2 py-0.5 text-xs rounded"><i class="fa-solid fa-plus"></i> 添加</button>
+                            </div>
+                        </div>
+                        <hr class="border-gray-700">
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <label class="form-label"><i class="fa-solid fa-box mr-1"></i>物品 (saved_items)</label>
+                                <button type="button" id="addItemBtn" class="btn-secondary text-white px-2 py-0.5 text-xs rounded"><i class="fa-solid fa-plus"></i> 添加</button>
+                            </div>
+                            <div id="itemList" class="flex flex-wrap gap-1 mt-1"></div>
+                            <div class="flex gap-1 mt-1 flex-wrap items-center">
+                                <input type="number" id="itemAddInput" placeholder="物品ID" class="form-input text-sm w-28" min="0">
+                                <button type="button" id="addItemConfirmBtn" class="btn-primary text-white px-2 py-0.5 text-xs rounded"><i class="fa-solid fa-plus"></i> 添加</button>
+                                <button type="button" id="itemLookupBtn" class="btn-secondary text-white px-2 py-0.5 text-xs rounded"><i class="fa-solid fa-magnifying-glass"></i> 查询</button>
+                            </div>
+                            <div id="itemPreview" class="item-preview-card hidden"></div>
+                        </div>
+                        <hr class="border-gray-700">
+                        <div class="batch-area">
+                            <div class="flex items-center gap-2 cursor-pointer" id="batchToggle">
+                                <i class="fa-solid fa-layer-group text-indigo-400"></i>
+                                <span class="text-sm font-medium text-indigo-300">批量修改 (当前选中生物)</span>
+                                <i class="fa-solid fa-chevron-down text-xs text-gray-500 ml-auto"></i>
+                            </div>
+                            <div id="batchContent" class="hidden mt-2 space-y-2">
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                    <div><label class="form-label text-xs">生命</label>
+                                        <select id="batchHealthOp" class="form-select text-sm"><option value="set">设为</option><option value="add">增加</option><option value="sub">减少</option></select>
+                                        <input type="number" id="batchHealthVal" class="form-input text-sm mt-0.5" value="0">
+                                    </div>
+                                    <div><label class="form-label text-xs">耐力</label>
+                                        <select id="batchStaminaOp" class="form-select text-sm"><option value="set">设为</option><option value="add">增加</option><option value="sub">减少</option></select>
+                                        <input type="number" id="batchStaminaVal" class="form-input text-sm mt-0.5" value="0">
+                                    </div>
+                                    <div><label class="form-label text-xs">法力</label>
+                                        <select id="batchManaOp" class="form-select text-sm"><option value="set">设为</option><option value="add">增加</option><option value="sub">减少</option></select>
+                                        <input type="number" id="batchManaVal" class="form-input text-sm mt-0.5" value="0">
+                                    </div>
+                                    <div><label class="form-label text-xs">幸福度</label>
+                                        <select id="batchHappinessOp" class="form-select text-sm"><option value="set">设为</option><option value="add">增加</option><option value="sub">减少</option></select>
+                                        <input type="number" id="batchHappinessVal" class="form-input text-sm mt-0.5" value="0">
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-2 items-center">
+                                    <label class="form-label text-xs">添加特质</label>
+                                    <select id="batchTraitSelect" class="form-select text-sm w-32">
+                                        <option value="dash">投掷</option><option value="block">格挡</option><option value="dodge">闪避</option><option value="wise">智慧</option><option value="strong">强壮</option><option value="weak">虚弱</option><option value="fast">快速</option><option value="slow">缓慢</option><option value="giant">巨大</option><option value="tiny">微小</option><option value="immortal">不朽</option><option value="content">满足</option><option value="honest">诚实</option><option value="greedy">贪婪</option><option value="lustful">好色</option><option value="bloodlust">嗜血</option><option value="paranoid">偏执</option><option value="deceitful">欺诈</option><option value="ambitious">野心勃勃</option>
+                                    </select>
+                                    <span class="text-[10px] text-gray-500">数量</span>
+                                    <input type="number" id="batchTraitCount" class="form-input text-sm w-12" min="1" max="99" value="1">
+                                    <button type="button" id="batchAddTraitBtn" class="btn-secondary text-white px-2 py-0.5 text-xs rounded">添加</button>
+                                    <label class="form-label text-xs ml-1">移除特质</label>
+                                    <select id="batchRemoveTrait" class="form-select text-sm w-32">
+                                        <option value="">选择</option>
+                                    </select>
+                                    <button type="button" id="batchRemoveTraitBtn" class="btn-danger text-white px-2 py-0.5 text-xs rounded">移除</button>
+                                </div>
+                                <div class="flex gap-2 flex-wrap">
+                                    <button id="batchApplyBtn" class="btn-primary text-white px-4 py-1 rounded text-sm">应用到勾选</button>
+                                    <button id="batchApplyAllBtn" class="btn-secondary text-white px-4 py-1 rounded text-sm">应用到全部</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-1 flex gap-2">
+                            <button type="button" id="saveActorBtn" class="flex-1 btn-primary text-white font-medium rounded-lg px-4 py-2 text-sm"><i class="fa-solid fa-check mr-1"></i>保存生物</button>
+                            <button type="button" id="resetActorBtn" class="btn-secondary text-white px-3 py-2 rounded-lg text-sm"><i class="fa-solid fa-undo"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="progressOverlay" class="progress-overlay hidden">
+        <div class="progress-box">
+            <div class="title"><i class="fa-solid fa-spinner fa-pulse mr-2"></i>加载存档</div>
+            <div class="sub" id="progressSub">正在读取文件...</div>
+            <div class="progress-track"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+            <div class="progress-text"><span id="progressPercent">0</span>%</div>
+        </div>
+    </div>
+
+    <footer class="text-center text-gray-500 text-xs py-4 border-t border-gray-800 mt-4"><i class="fa-regular fa-gem text-indigo-500"></i> 本地处理 · 隐私安全 · 一键修改</footer>
+
+    <script>
+        (function() {
+            const MAX_INT = 2147483647;
+            const TRAIT_NAMES = {
+                dash: '投掷',
+                block: '格挡',
+                dodge: '闪避',
+                backstep: '后撤步',
+                deflect_projectile: '弹射弹幕',
+                mute: '沉默',
+                sunblessed: '日耀祝福',
+                clumsy: '笨拙',
+                fragile_health: '脆弱生命',
+                boosted_vitality: '增强活力',
+                hard_skin: '坚硬皮肤',
+                soft_skin: '柔软皮肤',
+                long_liver: '长寿',
+                acid_touch: '酸蚀触碰',
+                acid_blood: '酸血',
+                acid_proof: '抗酸',
+                fire_blood: '火血',
+                fire_proof: '抗火',
+                freeze_proof: '抗冻',
+                regeneration: '再生',
+                heliophobia: '怕光症',
+                ugly: '丑陋',
+                fat: '肥胖',
+                attractive: '有魅力',
+                fast: '快速',
+                slow: '缓慢',
+                gluttonous: '贪吃',
+                giant: '巨大',
+                tiny: '微小',
+                eagle_eyed: '鹰眼',
+                short_sighted: '近视',
+                infertile: '不育',
+                fertile: '可育',
+                thorns: '荆棘',
+                bubble_defense: '气泡防御',
+                immune: '免疫',
+                agile: '敏捷',
+                weightless: '失重',
+                poisonous: '有毒',
+                venomous: '毒液',
+                poison_immune: '抗毒',
+                tough: '坚韧',
+                strong: '强壮',
+                weak: '虚弱',
+                lustful: '好色',
+                miner: '矿工',
+                psychopath: '变态',
+                strong_minded: '意志坚强',
+                peaceful: '和平',
+                evil: '邪恶',
+                hotheaded: '急躁',
+                thief: '小偷',
+                stupid: '愚蠢',
+                genius: '天才',
+                deceitful: '欺诈',
+                ambitious: '野心勃勃',
+                content: '满足',
+                honest: '诚实',
+                paranoid: '偏执',
+                greedy: '贪婪',
+                chosen_one: '天选之子',
+                moonchild: '月之子',
+                nightchild: '夜之子',
+                flesh_eater: '食肉者',
+                titan_lungs: '泰坦之肺',
+                heart_of_wizard: '巫师之心',
+                battle_reflexes: '战斗反射',
+                arcane_reflexes: '奥术反射',
+                healing_aura: '治疗光环',
+                savage: '野蛮',
+                immortal: '不朽',
+                burning_feet: '燃烧之足',
+                cold_aura: '寒冷光环',
+                lucky: '幸运',
+                unlucky: '不幸',
+                bloodlust: '嗜血',
+                pacifist: '和平主义者',
+                veteran: '老兵',
+                wise: '智慧',
+                infected: '感染',
+                mush_spores: '蘑菇孢子',
+                tumor_infection: '肿瘤感染',
+                plague: '瘟疫',
+                blessed: '祝福',
+                kingslayer: '杀王者',
+                mageslayer: '杀法师者',
+                dragonslayer: '屠龙者',
+                crippled: '残疾',
+                golden_tooth: '金牙',
+                eyepatch: '眼罩',
+                skin_burns: '皮肤烧伤',
+                super_health: '超级生命',
+                death_nuke: '死亡核弹',
+                death_bomb: '死亡炸弹',
+                death_mark: '死亡标记',
+                energized: '充能',
+                mega_heartbeat: '巨大心跳',
+                bomberman: '炸弹人',
+                pyromaniac: '纵火狂',
+                whirlwind: '旋风',
+                light_lamp: '点亮灯',
+                shiny: '闪亮',
+                flower_prints: '花纹',
+                clone: '克隆',
+                boat: '船',
+                scar_of_divinity: '神之伤疤',
+                miracle_born: '奇迹诞生',
+                miracle_bearer: '奇迹承载者',
+                contagious: '传染',
+                zombie: '僵尸',
+                madness: '疯狂',
+                desire_alien_mold: '外星霉渴望',
+                desire_computer: '计算机渴望',
+                desire_golden_egg: '金蛋渴望',
+                desire_harp: '竖琴渴望'
+            };
+            const TRAIT_LIST = Object.keys(TRAIT_NAMES);
+            const TYPE_MAP = {
+                stick: '木棍',
+                sword: '剑',
+                spear: '矛',
+                hammer: '锤',
+                axe: '斧',
+                bow: '弓',
+                armor: '胸甲',
+                helmet: '头盔',
+                boots: '靴子',
+                ring: '戒指',
+                amulet: '护符',
+                druid_staff: '德鲁伊法杖',
+                necromancer_staff: '死灵法杖',
+                plague_doctor_staff: '疫医法杖',
+                white_staff: '白色法杖',
+                evil_staff: '邪恶法杖',
+                alien_blaster: '外星枪',
+                flame_sword: '火焰之剑',
+                shotgun: '霰弹枪'
+            };
+            const MAT_MAP = { wood: '木', stone: '石', leather: '皮革', bone: '骨头', copper: '铜', bronze: '青铜',
+                silver: '银', iron: '铁', steel: '钢', mythril: '秘银', adamantine: '精金' };
+            let saveData = null,
+                actors = [],
+                cities = [],
+                kingdoms = [],
+                itemsData = [],
+                filtered = [],
+                selectedIdx = -1,
+                searchText = '',
+                raceFilter = '',
+                sortKey = 'default';
+            let history = [],
+                historyIdx = -1;
+            let currentTraits = [],
+                currentItems = [];
+            const $ = id => document.getElementById(id);
+            const el = (s, ctx) => (ctx || document).querySelector(s);
+            const all = (s, ctx) => (ctx || document).querySelectorAll(s);
+
+            function esc(str) { if (!str) return ''; return String(str).replace(/[&<>"']/g, function(m) { if (m ===
+                        '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; if (m ===
+                        '"') return '&quot;'; if (m === "'") return '&#039;'; return m; }) }
+
+            function showStatus(msg, type) {
+                const sa = $('statusArea');
+                sa.className = 'status-message fade-in';
+                if (type) sa.classList.add(type);
+                sa.innerHTML = `<i class="fa-regular fa-bell mr-2"></i> ${esc(msg)}`;
+                sa.style.display = 'block';
+                clearTimeout(sa._t);
+                sa._t = setTimeout(() => sa.style.display = 'none', 4000);
+            }
+
+            function pushHistory() {
+                const snap = { ts: Date.now(), actors: JSON.parse(JSON.stringify(actors)) };
+                if (historyIdx < history.length - 1) history = history.slice(0, historyIdx + 1);
+                history.push(snap);
+                if (history.length > 30) history.shift();
+                historyIdx = history.length - 1;
+                renderHistory();
+            }
+
+            function renderHistory() {
+                const hl = $('actorHistoryList');
+                hl.innerHTML = '';
+                if (!history.length) { hl.innerHTML = '<div class="text-xs text-gray-500 p-1">无历史</div>'; return }
+                history.forEach((h, i) => {
+                    const d = document.createElement('div');
+                    d.className = 'history-item';
+                    d.innerHTML =
+                        `<span>#${i+1} (生物${h.actors.length}) ${i===historyIdx?'⬅️':''}</span><span class="text-gray-500">${new Date(h.ts).toLocaleTimeString()}</span>`;
+                    d.addEventListener('click', function() {
+                        if (i >= 0 && i < history.length) {
+                            historyIdx = i;
+                            actors = JSON.parse(JSON.stringify(history[i].actors));
+                            selectedIdx = -1;
+                            $('actorEditForm').classList.add('hidden');
+                            $('actorFormEmpty').classList.remove('hidden');
+                            renderList();
+                            showStatus(`恢复到历史 #${i+1}`, 'info');
+                            renderHistory();
+                        }
+                    });
+                    hl.appendChild(d);
+                });
+            }
+
+            function populateFilters() {
+                const r = new Set();
+                actors.forEach(a => { if (a.asset_id) r.add(a.asset_id) });
+                const f = $('actorRaceFilter');
+                f.innerHTML = '<option value="">全部种族</option>';
+                [...r].sort().forEach(v => { const o = document.createElement('option');
+                    o.value = v;
+                    o.textContent = v;
+                    f.appendChild(o) });
+                const brt = $('batchRemoveTrait');
+                brt.innerHTML = '<option value="">选择</option>';
+                TRAIT_LIST.forEach(t => { const o = document.createElement('option');
+                    o.value = t;
+                    o.textContent = TRAIT_NAMES[t] + ' (' + t + ')';
+                    brt.appendChild(o) });
+            }
+
+            function renderList() {
+                if (!actors.length) {
+                    $('actorList').innerHTML = `<div class="empty-state"><i class="fa-regular fa-user"></i>无生物数据</div>`;
+                    $('actorCount').textContent = '0 个';
+                    return;
+                }
+                const q = searchText.toLowerCase();
+                filtered = actors.map((a, i) => ({ ...a, _idx: i })).filter(a => {
+                    if (raceFilter && a.asset_id !== raceFilter) return false;
+                    if (!q) return true;
+                    const n = (a.name || '').toLowerCase(),
+                        id = String(a.id || ''),
+                        asset = (a.asset_id || '').toLowerCase();
+                    return n.includes(q) || id.includes(q) || asset.includes(q);
+                });
+                if (sortKey !== 'default') {
+                    filtered.sort((a, b) => {
+                        if (sortKey === 'name') { const na = (a.name || '').toLowerCase(),
+                                nb = (b.name || '').toLowerCase(); return na.localeCompare(nb) } if (sortKey ===
+                            'id') return (a.id || 0) - (b.id || 0); if (sortKey === 'health') return (b.health ||
+                            0) - (a.health || 0); return 0;
+                    });
+                }
+                $('actorCount').textContent = `${actors.length} 个${filtered.length<actors.length?' (显示 '+filtered.length+')':''}`;
+                if (!filtered.length) {
+                    $('actorList').innerHTML =
+                    `<div class="empty-state"><i class="fa-regular fa-filter-circle-xmark"></i>无匹配结果</div>`;
+                    return;
+                }
+                let html = '';
+                filtered.forEach(a => {
+                    const active = a._idx === selectedIdx ? 'active' : '';
+                    const name = a.name || '未命名';
+                    const asset = a.asset_id || '?';
+                    const prof = a.profession !== undefined ? a.profession : '?';
+                    const hp = a.health !== undefined ? a.health : '?';
+                    const tc = (a.saved_traits && a.saved_traits.length) ? `✨${a.saved_traits.length}` : '';
+                    html += `<div class="actor-card ${active}" data-idx="${a._idx}">
+                        <div class="card-content" data-idx="${a._idx}">
+                            <div class="flex justify-between items-start mb-0.5">
+                                <span class="font-bold text-slate-200 text-sm truncate pr-2">${esc(name)}</span>
+                                <span class="text-xs text-slate-400 whitespace-nowrap">#${a.id||a._idx+1}</span>
+                            </div>
+                            <div class="text-xs text-slate-500 mb-0.5">${esc(asset)} · 职业:${prof} · HP:${hp} ${tc}</div>
+                            <div class="flex items-center gap-3 text-xs text-slate-400">
+                                <span><i class="fa-solid fa-location-dot text-[10px] mr-1"></i>(${a.x||0}, ${a.y||0})</span>
+                                <span><i class="fa-regular fa-heart text-[10px] mr-1"></i>${esc(String(hp))}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+                $('actorList').innerHTML = html;
+                $('actorList').querySelectorAll('.actor-card .card-content').forEach(el => {
+                    el.addEventListener('click', function() { selectActor(parseInt(this.dataset.idx)) });
+                });
+                if (selectedIdx === -1 && filtered.length) selectActor(filtered[0]._idx);
+                else if (selectedIdx !== -1 && !filtered.some(a => a._idx === selectedIdx)) {
+                    if (filtered.length) selectActor(filtered[0]._idx);
+                    else { $('actorEditForm').classList.add('hidden');
+                        $('actorFormEmpty').classList.remove('hidden') }
+                }
+            }
+
+            function selectActor(idx) {
+                if (idx < 0 || idx >= actors.length) return;
+                selectedIdx = idx;
+                const a = actors[idx];
+                $('actorEditForm').classList.remove('hidden');
+                $('actorFormEmpty').classList.add('hidden');
+                const map = {
+                    'a_id': 'id',
+                    'a_name': 'name',
+                    'a_asset': 'asset_id',
+                    'a_x': 'x',
+                    'a_y': 'y',
+                    'a_profession': 'profession',
+                    'a_subspecies': 'subspecies',
+                    'a_language': 'language',
+                    'a_religion': 'religion',
+                    'a_generation': 'generation',
+                    'a_cityID': 'cityID',
+                    'a_kingdomID': 'civ_kingdom_id',
+                    'a_army': 'army',
+                    'a_lover': 'lover',
+                    'a_bestfriend': 'best_friend_id',
+                    'a_family': 'family',
+                    'a_ancestor': 'ancestor_family',
+                    'a_parent1': 'parent_id_1',
+                    'a_parent2': 'parent_id_2',
+                    'a_head': 'head',
+                    'a_pheno_idx': 'phenotype_index',
+                    'a_pheno_shade': 'phenotype_shade',
+                    'a_age_over': 'age_overgrowth',
+                    'a_created': 'created_time',
+                    'a_sex': 'sex',
+                    'a_clan': 'clan',
+                    'a_health': 'health',
+                    'a_stamina': 'stamina',
+                    'a_mana': 'mana',
+                    'a_happiness': 'happiness',
+                    'a_nutrition': 'nutrition',
+                    'a_money': 'money',
+                    'a_kills': 'kills',
+                    'a_food': 'food_consumed',
+                    'a_births': 'births',
+                    'a_loot': 'loot',
+                    'a_renown': 'renown',
+                    'a_experience': 'experience',
+                    'a_level': 'level'
+                };
+                Object.keys(map).forEach(id => {
+                    const el = $(id);
+                    if (el) { const v = a[map[id]] !== undefined ? a[map[id]] : '';
+                        el.value = v }
+                });
+                const cf = a.custom_data_float || {};
+                ['cf_diplomacy', 'cf_warfare', 'cf_intelligence', 'cf_stewardship'].forEach(id => {
+                    const key = id.replace('cf_', '');
+                    const el = $(id);
+                    if (el) { el.value = cf[key] !== undefined ? cf[key] : '' }
+                });
+                currentTraits = (a.saved_traits || []).slice();
+                renderTraits();
+                currentItems = (a.saved_items || []).slice();
+                renderItems();
+                $('itemPreview').classList.add('hidden');
+                ['preview_a_cityID', 'preview_a_kingdomID', 'preview_a_lover', 'preview_a_bestfriend',
+                    'preview_a_parent1', 'preview_a_parent2'
+                ].forEach(id => {
+                    const p = $(id);
+                    if (p) { p.classList.remove('visible');
+                        p.innerHTML = '' }
+                });
+                renderList();
+            }
+
+            function renderTraits() {
+                const container = $('traitList');
+                if (!currentTraits.length) {
+                    container.innerHTML = `<div class="text-xs text-gray-500 py-1">无特质</div>`;
+                    return;
+                }
+                const map = {};
+                currentTraits.forEach(t => { map[t] = (map[t] || 0) + 1 });
+                const keys = Object.keys(map);
+                let html = '';
+                keys.forEach((t, idx) => {
+                    const cnt = map[t];
+                    html += `<div class="trait-item" data-key="${t}">
+                        <select class="trait-type">${TRAIT_LIST.map(t2 => `<option value="${t2}" ${t2===t?'selected':''}>${TRAIT_NAMES[t2]} (${t2})</option>`).join('')}</select>
+                        <span class="label-tag">数量</span>
+                        <input type="number" class="trait-count count-input" min="1" max="99" value="${cnt}">
+                        <button type="button" class="btn-sm move-up" ${idx===0?'disabled':''}><i class="fa-solid fa-arrow-up"></i></button>
+                        <button type="button" class="btn-sm move-down" ${idx===keys.length-1?'disabled':''}><i class="fa-solid fa-arrow-down"></i></button>
+                        <button type="button" class="btn-sm danger remove-trait"><i class="fa-solid fa-xmark"></i></button>
+                    </div>`;
+                });
+                container.innerHTML = html;
+                container.querySelectorAll('.trait-item').forEach((div, idx) => {
+                    const typeSel = div.querySelector('.trait-type');
+                    const countInp = div.querySelector('.trait-count');
+                    const update = () => {
+                        const newTraits = [];
+                        container.querySelectorAll('.trait-item').forEach((d) => {
+                            const t = d.querySelector('.trait-type').value;
+                            const c = Math.max(1, parseInt(d.querySelector('.trait-count').value) || 1);
+                            for (let j = 0; j < c; j++) newTraits.push(t);
+                        });
+                        currentTraits = newTraits;
+                        renderTraits();
+                    };
+                    typeSel.addEventListener('change', update);
+                    countInp.addEventListener('change', update);
+                    div.querySelector('.move-up').addEventListener('click', function() {
+                        if (idx > 0) { const items = container.querySelectorAll('.trait-item');
+                            const keys2 = Array.from(items).map(d => d.dataset.key);
+                            [keys2[idx - 1], keys2[idx]] = [keys2[idx], keys2[idx - 1]];
+                            const newTraits = [];
+                            keys2.forEach(k => { const c = map[k] || 1; for (let j = 0; j < c; j++)
+                                    newTraits.push(k) });
+                            currentTraits = newTraits;
+                            renderTraits();
+                        }
+                    });
+                    div.querySelector('.move-down').addEventListener('click', function() {
+                        const items = container.querySelectorAll('.trait-item');
+                        if (idx < items.length - 1) { const keys2 = Array.from(items).map(d => d.dataset
+                            .key);
+                            [keys2[idx + 1], keys2[idx]] = [keys2[idx], keys2[idx + 1]];
+                            const newTraits = [];
+                            keys2.forEach(k => { const c = map[k] || 1; for (let j = 0; j < c; j++)
+                                    newTraits.push(k) });
+                            currentTraits = newTraits;
+                            renderTraits();
+                        }
+                    });
+                    div.querySelector('.remove-trait').addEventListener('click', function() {
+                        const key2 = div.dataset.key;
+                        currentTraits = currentTraits.filter(t => t !== key2);
+                        renderTraits();
+                    });
+                });
+            }
+
+            function renderItems() {
+                const container = $('itemList');
+                if (!currentItems.length) {
+                    container.innerHTML = `<span class="text-xs text-gray-500">无物品</span>`;
+                    return;
+                }
+                let html = '';
+                currentItems.forEach((id, idx) => {
+                    html +=
+                        `<span class="item-tag">#${id} <span class="remove-item" data-idx="${idx}"><i class="fa-solid fa-xmark"></i></span></span>`;
+                });
+                container.innerHTML = html;
+                container.querySelectorAll('.remove-item').forEach(el => {
+                    el.addEventListener('click', function() {
+                        const idx2 = parseInt(this.dataset.idx);
+                        currentItems.splice(idx2, 1);
+                        renderItems();
+                    });
+                });
+            }
+
+            function lookupItem(id) {
+                if (!itemsData) return null;
+                return itemsData.find(it => it.id === parseInt(id));
+            }
+
+            function renderItemPreview(id) {
+                const container = $('itemPreview');
+                const item = lookupItem(id);
+                if (!item) { container.classList.add('hidden'); return }
+                container.classList.remove('hidden');
+                let typeLabel = '未知',
+                    matLabel = '';
+                if (item.asset_id) {
+                    const p = item.asset_id.split('_');
+                    if (p.length === 2) { typeLabel = TYPE_MAP[p[0]] || p[0];
+                        matLabel = MAT_MAP[p[1]] || p[1] } else { typeLabel = TYPE_MAP[p[0]] || p[0] }
+                }
+                const mods = (item.modifiers || []).map(m => {
+                    const match = m.match(/^([a-z]+)(\d+)?$/);
+                    if (match) { const nameMap = { power: '力量', truth: '诚信', protection: '保护', speed: '速度',
+                            balance: '协调', health: '健康', finesse: '技巧', mastery: '精通', knowledge: '学问',
+                            sharpness: '锋利', flame: '灼烧', ice: '冰冻', slowness: '减速', poison: '淬毒' };
+                        return (nameMap[match[1]] || match[1]) + (match[2] || '') } return m;
+                }).join(' · ');
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 text-xs">
+                        <div><span class="label">名称</span><div class="val">${esc(item.name||'无')}</div></div>
+                        <div><span class="label">种类</span><div class="val">${esc(typeLabel)}</div></div>
+                        <div><span class="label">材质</span><div class="val">${esc(matLabel||'无')}</div></div>
+                        <div><span class="label">制造者</span><div class="val">${esc(item.by||'无')}</div></div>
+                        <div><span class="label">国家</span><div class="val">${esc(item.from||'无')}</div></div>
+                        <div class="col-span-2"><span class="label">词条</span><div class="val">${esc(mods||'无')}</div></div>
+                    </div>
+                `;
+            }
+
+            function queryActor(id) {
+                if (!actors) return null;
+                return actors.find(a => a.id === parseInt(id));
+            }
+
+            function queryKingdom(id) {
+                if (!kingdoms) return null;
+                return kingdoms.find(k => k.id === parseInt(id));
+            }
+
+            function queryCity(id) {
+                if (!cities) return null;
+                return cities.find(c => c.id === parseInt(id));
+            }
+
+            function renderActorPreview(inputId, label) {
+                const container = $(`preview_${inputId}`);
+                if (!container) return;
+                const input = $(inputId);
+                if (!input) return;
+                const val = parseInt(input.value);
+                if (isNaN(val) || val < 0) {
+                    container.classList.remove('visible');
+                    container.innerHTML = '';
+                    return;
+                }
+                const actor = queryActor(val);
+                if (!actor) {
+                    container.classList.add('visible');
+                    container.innerHTML = `<span class="text-gray-400">没有这个属性</span>`;
+                    return;
+                }
+                container.classList.add('visible');
+                const name = actor.name || '未命名';
+                const asset = actor.asset_id || '?';
+                const hp = actor.health !== undefined ? actor.health : '?';
+                const x = actor.x || 0,
+                    y = actor.y || 0;
+                const traits = (actor.saved_traits && actor.saved_traits.length) ? actor.saved_traits.length : 0;
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 text-xs">
+                        <div><span class="label">关系</span><span class="val">${esc(label)}</span></div>
+                        <div><span class="label">ID</span><span class="val">${actor.id}</span></div>
+                        <div><span class="label">名称</span><span class="val">${esc(name)}</span></div>
+                        <div><span class="label">种族</span><span class="val">${esc(asset)}</span></div>
+                        <div><span class="label">生命</span><span class="val">${hp}</span></div>
+                        <div><span class="label">位置</span><span class="val">(${x}, ${y})</span></div>
+                        <div class="col-span-2"><span class="label">特质数</span><span class="val">${traits}</span></div>
+                    </div>
+                `;
+            }
+
+            function renderKingdomPreview(inputId) {
+                const container = $(`preview_${inputId}`);
+                if (!container) return;
+                const input = $(inputId);
+                if (!input) return;
+                const val = parseInt(input.value);
+                if (isNaN(val) || val < 0) {
+                    container.classList.remove('visible');
+                    container.innerHTML = '';
+                    return;
+                }
+                const k = queryKingdom(val);
+                if (!k) {
+                    container.classList.add('visible');
+                    container.innerHTML = `<span class="text-gray-400">没有这个属性</span>`;
+                    return;
+                }
+                container.classList.add('visible');
+                const name = k.name || '未命名';
+                const asset = k.original_actor_asset || '?';
+                const capital = k.capitalID !== undefined ? k.capitalID : '?';
+                const motto = k.motto || '无';
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 text-xs">
+                        <div><span class="label">关系</span><span class="val">所属王国</span></div>
+                        <div><span class="label">ID</span><span class="val">${k.id}</span></div>
+                        <div><span class="label">名称</span><span class="val">${esc(name)}</span></div>
+                        <div><span class="label">种族</span><span class="val">${esc(asset)}</span></div>
+                        <div><span class="label">首都</span><span class="val">${capital}</span></div>
+                        <div><span class="label">座右铭</span><span class="val">${esc(motto)}</span></div>
+                    </div>
+                `;
+            }
+
+            function renderCityPreview(inputId) {
+                const container = $(`preview_${inputId}`);
+                if (!container) return;
+                const input = $(inputId);
+                if (!input) return;
+                const val = parseInt(input.value);
+                if (isNaN(val) || val < 0) {
+                    container.classList.remove('visible');
+                    container.innerHTML = '';
+                    return;
+                }
+                const c = queryCity(val);
+                if (!c) {
+                    container.classList.add('visible');
+                    container.innerHTML = `<span class="text-gray-400">没有这个属性</span>`;
+                    return;
+                }
+                container.classList.add('visible');
+                const name = c.name || '未命名';
+                const asset = c.original_actor_asset || '?';
+                const leader = c.leaderID !== undefined ? c.leaderID : '?';
+                const kingdom = c.kingdomID !== undefined ? c.kingdomID : '?';
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 text-xs">
+                        <div><span class="label">关系</span><span class="val">城市</span></div>
+                        <div><span class="label">ID</span><span class="val">${c.id}</span></div>
+                        <div><span class="label">名称</span><span class="val">${esc(name)}</span></div>
+                        <div><span class="label">种族</span><span class="val">${esc(asset)}</span></div>
+                        <div><span class="label">村长</span><span class="val">${leader}</span></div>
+                        <div><span class="label">王国</span><span class="val">${kingdom}</span></div>
+                    </div>
+                `;
+            }
+
+            function saveActor() {
+                if (selectedIdx < 0 || selectedIdx >= actors.length) { showStatus('请先选择生物', 'warning'); return }
+                pushHistory();
+                const a = actors[selectedIdx];
+                const map = {
+                    'a_id': 'id',
+                    'a_name': 'name',
+                    'a_asset': 'asset_id',
+                    'a_x': 'x',
+                    'a_y': 'y',
+                    'a_profession': 'profession',
+                    'a_subspecies': 'subspecies',
+                    'a_language': 'language',
+                    'a_religion': 'religion',
+                    'a_generation': 'generation',
+                    'a_cityID': 'cityID',
+                    'a_kingdomID': 'civ_kingdom_id',
+                    'a_army': 'army',
+                    'a_lover': 'lover',
+                    'a_bestfriend': 'best_friend_id',
+                    'a_family': 'family',
+                    'a_ancestor': 'ancestor_family',
+                    'a_parent1': 'parent_id_1',
+                    'a_parent2': 'parent_id_2',
+                    'a_head': 'head',
+                    'a_pheno_idx': 'phenotype_index',
+                    'a_pheno_shade': 'phenotype_shade',
+                    'a_age_over': 'age_overgrowth',
+                    'a_created': 'created_time',
+                    'a_sex': 'sex',
+                    'a_clan': 'clan',
+                    'a_health': 'health',
+                    'a_stamina': 'stamina',
+                    'a_mana': 'mana',
+                    'a_happiness': 'happiness',
+                    'a_nutrition': 'nutrition',
+                    'a_money': 'money',
+                    'a_kills': 'kills',
+                    'a_food': 'food_consumed',
+                    'a_births': 'births',
+                    'a_loot': 'loot',
+                    'a_renown': 'renown',
+                    'a_experience': 'experience',
+                    'a_level': 'level'
+                };
+                Object.keys(map).forEach(id => {
+                    const el = $(id);
+                    if (el) {
+                        let v = el.value;
+                        const field = map[id];
+                        if (field !== 'name' && field !== 'asset_id') { v = parseFloat(v); if (isNaN(v)) v =
+                            0 }
+                        a[field] = v;
+                    }
+                });
+                if (!a.custom_data_float) a.custom_data_float = {};
+                ['cf_diplomacy', 'cf_warfare', 'cf_intelligence', 'cf_stewardship'].forEach(id => {
+                    const el = $(id);
+                    if (el) {
+                        const key = id.replace('cf_', '');
+                        let v = parseFloat(el.value);
+                        if (isNaN(v)) v = 0;
+                        a.custom_data_float[key] = v;
+                    }
+                });
+                a.saved_traits = currentTraits.slice();
+                a.saved_items = currentItems.slice();
+                renderList();
+                showStatus(`✓ 生物 #${selectedIdx+1} 已保存`, 'success');
+            }
+
+            function batchApply(targets) {
+                if (!targets.length) { showStatus('没有目标生物', 'warning'); return }
+                if (!confirm(`确定批量修改 ${targets.length} 个生物吗？`)) return;
+                pushHistory();
+                const ops = [
+                    { op: $('batchHealthOp').value, val: parseInt($('batchHealthVal').value) || 0, field: 'health' },
+                    { op: $('batchStaminaOp').value, val: parseInt($('batchStaminaVal').value) || 0, field: 'stamina' },
+                    { op: $('batchManaOp').value, val: parseInt($('batchManaVal').value) || 0, field: 'mana' },
+                    { op: $('batchHappinessOp').value, val: parseInt($('batchHappinessVal').value) || 0,
+                        field: 'happiness' }
+                ];
+                const addTrait = $('batchTraitSelect').value;
+                const addCount = Math.max(1, parseInt($('batchTraitCount').value) || 1);
+                const removeTrait = $('batchRemoveTrait').value;
+                targets.forEach(a => {
+                    ops.forEach(({ op, val, field }) => {
+                        if (val !== 0) {
+                            let cur = a[field] || 0;
+                            if (op === 'set') cur = val;
+                            else if (op === 'add') cur += val;
+                            else if (op === 'sub') cur -= val;
+                            if (cur < 0) cur = 0;
+                            if (cur > MAX_INT) cur = MAX_INT;
+                            a[field] = cur;
+                        }
+                    });
+                    if (addTrait) {
+                        if (!a.saved_traits) a.saved_traits = [];
+                        for (let i = 0; i < addCount; i++) a.saved_traits.push(addTrait);
+                    }
+                    if (removeTrait && a.saved_traits) {
+                        a.saved_traits = a.saved_traits.filter(t => t !== removeTrait);
+                        if (!a.saved_traits.length) delete a.saved_traits;
+                    }
+                });
+                renderList();
+                if (selectedIdx >= 0) {
+                    const a = actors[selectedIdx];
+                    ['a_health', 'a_stamina', 'a_mana', 'a_happiness'].forEach(id => {
+                        const el = $(id);
+                        if (el) { const field = { a_health: 'health', a_stamina: 'stamina',
+                                a_mana: 'mana', a_happiness: 'happiness' } [id];
+                            el.value = a[field] !== undefined ? a[field] : '' }
+                    });
+                    currentTraits = (a.saved_traits || []).slice();
+                    renderTraits();
+                }
+                showStatus(`批量修改应用到 ${targets.length} 个生物`, 'success');
+            }
+
+            function handleFile(file) {
+                if (!file) { showStatus('未选择文件', 'error'); return }
+                if (!file.name.toLowerCase().endsWith('.json')) { showStatus('请上传 .json 文件', 'error'); return }
+                const overlay = $('progressOverlay');
+                overlay.classList.remove('hidden');
+                $('progressBar').style.width = '0%';
+                $('progressPercent').textContent = '0';
+                $('progressSub').textContent = '读取文件...';
+                const reader = new FileReader();
+                reader.onprogress = function(e) {
+                    if (e.lengthComputable) {
+                        const pct = Math.round((e.loaded / e.total) * 80);
+                        $('progressBar').style.width = pct + '%';
+                        $('progressPercent').textContent = pct;
+                        $('progressSub').textContent = `读取中 ${pct}%`;
+                    }
+                };
+                reader.onload = function(e) {
+                    $('progressSub').textContent = '解析数据...';
+                    $('progressBar').style.width = '85%';
+                    $('progressPercent').textContent = '85';
+                    setTimeout(() => {
+                        try {
+                            const json = JSON.parse(e.target.result);
+                            if (!json.items || !Array.isArray(json.items)) {
+                                throw new Error('缺少 items 数组，请确认是有效的世界盒子存档');
+                            }
+                            saveData = json;
+                            actors = json.actors_data || [];
+                            actors.forEach(a => {
+                                if (!a.saved_traits) a.saved_traits = [];
+                                if (!a.saved_items) a.saved_items = [];
+                                if (!a.custom_data_float) a.custom_data_float = {};
+                            });
+                            cities = json.cities || json.villages || json.Villages || json.village || [];
+                            kingdoms = json.kingdoms || json.Kingdoms || [];
+                            itemsData = json.items || [];
+                            history = [];
+                            historyIdx = -1;
+                            renderHistory();
+                            selectedIdx = -1;
+                            searchText = '';
+                            $('actorSearch').value = '';
+                            raceFilter = '';
+                            $('actorRaceFilter').value = '';
+                            sortKey = 'default';
+                            $('actorSort').value = 'default';
+                            $('fileNameDisplay').innerHTML =
+                                `<i class="fa-regular fa-file-lines mr-1"></i> ${esc(file.name)} (${actors.length}个生物)`;
+                            $('fileNameDisplay').classList.add('text-indigo-400', 'font-semibold');
+                            $('file-badge').textContent = file.name;
+                            $('loaded-icon').classList.remove('hidden');
+                            $('uploadSection').classList.add('hidden');
+                            $('editorContainer').classList.remove('hidden');
+                            $('editorContainer').classList.add('fade-in');
+                            populateFilters();
+                            renderList();
+                            $('actorEditForm').classList.add('hidden');
+                            $('actorFormEmpty').classList.remove('hidden');
+                            const brt = $('batchRemoveTrait');
+                            brt.innerHTML = '<option value="">选择</option>';
+                            TRAIT_LIST.forEach(t => { const o = document.createElement('option');
+                                o.value = t;
+                                o.textContent = TRAIT_NAMES[t] + ' (' + t + ')';
+                                brt.appendChild(o) });
+                            $('progressBar').style.width = '100%';
+                            $('progressPercent').textContent = '100';
+                            $('progressSub').textContent = '加载完成';
+                            setTimeout(() => {
+                                overlay.classList.add('hidden');
+                                showStatus(`✓ 加载成功！${actors.length} 个生物`, 'success');
+                            }, 300);
+                        } catch (err) {
+                            console.error(err);
+                            overlay.classList.add('hidden');
+                            showStatus('解析失败: ' + err.message, 'error');
+                            $('fileInput').value = '';
+                        }
+                    }, 50);
+                };
+                reader.onerror = function() {
+                    overlay.classList.add('hidden');
+                    showStatus('读取文件失败', 'error');
+                    $('fileInput').value = '';
+                };
+                reader.readAsText(file, 'UTF-8');
+            }
+
+            function downloadSave() {
+                if (!saveData) { showStatus('无存档数据', 'warning'); return }
+                saveData.actors_data = actors;
+                const data = JSON.stringify(saveData, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const name = $('file-badge').textContent.replace('.json', '') || 'worldbox_save';
+                a.download = `${name}_modified.json`;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => { document.body.removeChild(a);
+                    URL.revokeObjectURL(url) }, 200);
+                showStatus('存档已开始下载', 'success');
+            }
+
+            const fileInput = $('fileInput'),
+                dropZone = $('dropZone');
+            fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]) });
+            dropZone.addEventListener('dragover', e => { e.preventDefault();
+                dropZone.style.borderColor = '#3b82f6';
+                dropZone.style.backgroundColor = '#1e293b' });
+            dropZone.addEventListener('dragleave', e => { e.preventDefault();
+                dropZone.style.borderColor = '#374151';
+                dropZone.style.backgroundColor = '#0f0f1a' });
+            dropZone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropZone.style.borderColor = '#374151';
+                dropZone.style.backgroundColor = '#0f0f1a';
+                if (e.dataTransfer.files.length) {
+                    const f = e.dataTransfer.files[0];
+                    if (f.name.toLowerCase().endsWith('.json')) { fileInput.files = e.dataTransfer.files;
+                        handleFile(f) } else showStatus('请拖入 .json 文件', 'error');
+                }
+            });
+
+            $('actorSearch').addEventListener('input', function() { searchText = this.value;
+                renderList() });
+            $('actorRaceFilter').addEventListener('change', function() { raceFilter = this.value;
+                renderList() });
+            $('actorSort').addEventListener('change', function() { sortKey = this.value;
+                renderList() });
+
+            $('saveActorBtn').addEventListener('click', saveActor);
+            $('resetActorBtn').addEventListener('click', function() {
+                selectedIdx = -1;
+                $('actorEditForm').classList.add('hidden');
+                $('actorFormEmpty').classList.remove('hidden');
+                renderList();
+                showStatus('已取消选择', 'info');
+            });
+
+            $('addTraitConfirmBtn').addEventListener('click', function() {
+                const val = $('traitSelect').value;
+                const cnt = Math.max(1, parseInt($('traitCountInput').value) || 1);
+                if (val) { for (let i = 0; i < cnt; i++) currentTraits.push(val);
+                    renderTraits() }
+            });
+            $('addTraitBtn').addEventListener('click', function() { $('addTraitConfirmBtn').click() });
+
+            $('addItemConfirmBtn').addEventListener('click', function() {
+                const val = parseInt($('itemAddInput').value);
+                if (!isNaN(val) && val >= 0) { currentItems.push(val);
+                    renderItems();
+                    $('itemAddInput').value = '' } else showStatus('请输入有效ID', 'warning');
+            });
+            $('addItemBtn').addEventListener('click', function() { $('addItemConfirmBtn').click() });
+            $('itemLookupBtn').addEventListener('click', function() {
+                const val = parseInt($('itemAddInput').value);
+                if (!isNaN(val) && val >= 0) renderItemPreview(val);
+                else showStatus('请输入有效ID', 'warning');
+            });
+
+            document.querySelectorAll('.lookup-actor').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.dataset.target;
+                    const label = this.dataset.label || '生物';
+                    renderActorPreview(target, label);
+                });
+            });
+            document.querySelectorAll('.lookup-kingdom').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.dataset.target;
+                    renderKingdomPreview(target);
+                });
+            });
+            document.querySelectorAll('.lookup-city').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.dataset.target;
+                    renderCityPreview(target);
+                });
+            });
+
+            $('actorUndoBtn').addEventListener('click', function() {
+                if (historyIdx > 0) {
+                    historyIdx--;
+                    const snap = history[historyIdx];
+                    actors = JSON.parse(JSON.stringify(snap.actors));
+                    selectedIdx = -1;
+                    $('actorEditForm').classList.add('hidden');
+                    $('actorFormEmpty').classList.remove('hidden');
+                    renderList();
+                    showStatus('已撤销', 'info');
+                } else showStatus('没有更早的历史', 'warning');
+                renderHistory();
+            });
+            $('actorHistoryToggle').addEventListener('click', function() {
+                const p = $('actorHistoryPanel');
+                p.classList.toggle('hidden');
+                if (!p.classList.contains('hidden')) renderHistory();
+            });
+            $('actorClearHistoryBtn').addEventListener('click', function() { history = [];
+                historyIdx = -1;
+                renderHistory();
+                showStatus('历史已清空', 'info') });
+
+            $('batchToggle').addEventListener('click', function() {
+                $('batchContent').classList.toggle('hidden');
+            });
+            $('batchApplyBtn').addEventListener('click', function() {
+                const targets = [];
+                if (selectedIdx >= 0 && selectedIdx < actors.length) targets.push(actors[selectedIdx]);
+                if (!targets.length) { showStatus('请先选择一个生物', 'warning'); return }
+                batchApply(targets);
+            });
+            $('batchApplyAllBtn').addEventListener('click', function() {
+                if (!actors.length) { showStatus('没有生物', 'warning'); return }
+                batchApply(actors);
+            });
+            $('batchAddTraitBtn').addEventListener('click', function() {
+                showStatus('已设置添加特质，点击"应用到勾选/全部"生效', 'info');
+            });
+            $('batchRemoveTraitBtn').addEventListener('click', function() {
+                showStatus('已设置移除特质，点击"应用到勾选/全部"生效', 'info');
+            });
+
+            $('downloadBtn').addEventListener('click', downloadSave);
+
+            window.addEventListener('dragover', e => e.preventDefault());
+            window.addEventListener('drop', e => e.preventDefault());
+
+            renderList();
+            renderHistory();
+        })();
+    </script>
+</body>
+</html>

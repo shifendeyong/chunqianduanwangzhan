@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>世界盒子 · 武器</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link href="https://cdn.staticfile.net/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #4b5563 #1e1e1e
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+            border-radius: 4px
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px
+        }
+        body {
+            background: #121212;
+            color: #e5e5e5;
+            font-family: system-ui, -apple-system, 'Inter', 'Segoe UI', sans-serif;
+            padding-bottom: env(safe-area-inset-bottom)
+        }
+        .card {
+            background: #1e1e1e;
+            border-radius: 1rem;
+            border: 1px solid #2d2d2d;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: transform .2s, box-shadow .2s;
+            margin-bottom: 1.5rem;
+            overflow: hidden
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+            border-color: #3b82f6
+        }
+        .custom-input {
+            width: 100%;
+            padding: .75rem 1rem .75rem 2.5rem;
+            background-color: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .75rem;
+            outline: none;
+            transition: all .2s;
+            font-size: 1rem;
+            color: #f0f0f0
+        }
+        .custom-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background-color: #1a1a1a
+        }
+        .custom-input-sm {
+            padding: .5rem .75rem;
+            font-size: .875rem
+        }
+        .file-upload-wrapper {
+            position: relative;
+            width: 100%;
+            height: 130px;
+            border: 2px dashed #374151;
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            background-color: #0f0f1a
+        }
+        .file-upload-wrapper:hover {
+            border-color: #3b82f6;
+            background-color: #1e293b;
+            transform: scale(.99)
+        }
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer
+        }
+        .btn-primary {
+            background: linear-gradient(105deg, #2563eb, #1d4ed8);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all .2s
+        }
+        .btn-primary:hover {
+            background: linear-gradient(105deg, #3b82f6, #2563eb);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4)
+        }
+        .btn-success {
+            background: linear-gradient(105deg, #059669, #047857);
+            transition: all .2s
+        }
+        .btn-success:hover {
+            background: linear-gradient(105deg, #10b981, #059669);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3)
+        }
+        .btn-secondary {
+            background: linear-gradient(105deg, #4b5563, #374151);
+            transition: all .2s
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(105deg, #6b7280, #4b5563);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3)
+        }
+        .btn-danger {
+            background: linear-gradient(105deg, #dc2626, #b91c1c);
+            transition: all .2s
+        }
+        .btn-danger:hover {
+            background: linear-gradient(105deg, #ef4444, #dc2626);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3)
+        }
+        button:active {
+            transform: scale(.97)
+        }
+        .badge-version {
+            background: rgba(59, 130, 246, 0.2);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(59, 130, 246, 0.4)
+        }
+        .status-message {
+            background: #1e1e2f;
+            border-left: 4px solid;
+            border-radius: .75rem;
+            padding: .75rem 1rem;
+            font-size: .85rem;
+            display: none;
+            margin-bottom: 1rem
+        }
+        .status-message.success {
+            border-left-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            color: #a7f3d0
+        }
+        .status-message.error {
+            border-left-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            color: #fecaca
+        }
+        .status-message.warning {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+            color: #fed7aa
+        }
+        .status-message.info {
+            border-left-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+            color: #93c5fd
+        }
+        .fade-in {
+            animation: fadeInUp .3s cubic-bezier(0.2, 0.9, 0.4, 1.1)
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+        .weapon-card {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: .75rem;
+            padding: .6rem .75rem;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            gap: .5rem
+        }
+        .weapon-card:hover {
+            border-color: #3b82f6;
+            background: #1a1a2a
+        }
+        .weapon-card.active {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.12);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.08)
+        }
+        .weapon-card .card-content {
+            flex: 1;
+            min-width: 0
+        }
+        .weapon-card input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            flex-shrink: 0;
+            accent-color: #3b82f6;
+            cursor: pointer
+        }
+        .weapon-list-container {
+            max-height: calc(100vh - 420px);
+            min-height: 200px;
+            overflow-y: auto
+        }
+        .form-input {
+            width: 100%;
+            padding: .6rem .9rem;
+            background-color: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .75rem;
+            outline: none;
+            transition: all .2s;
+            font-size: .9rem;
+            color: #f0f0f0
+        }
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background-color: #1a1a1a
+        }
+        .form-select {
+            width: 100%;
+            padding: .6rem .9rem;
+            background-color: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .75rem;
+            outline: none;
+            transition: all .2s;
+            font-size: .9rem;
+            color: #f0f0f0;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right .75rem center;
+            background-repeat: no-repeat;
+            background-size: 1.2rem
+        }
+        .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background-color: #1a1a1a
+        }
+        .form-label {
+            display: block;
+            font-size: .8rem;
+            font-weight: 500;
+            color: #9ca3af;
+            margin-bottom: .3rem
+        }
+        .empty-state {
+            color: #6b7280;
+            text-align: center;
+            padding: 2.5rem 1rem
+        }
+        .empty-state i {
+            font-size: 2.5rem;
+            opacity: .3;
+            display: block;
+            margin-bottom: .75rem
+        }
+        .hidden {
+            display: none !important
+        }
+        .modifier-item {
+            background: #0f0f1a;
+            border: 1px solid #2d2d2d;
+            border-radius: .5rem;
+            padding: .5rem .75rem;
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+            flex-wrap: wrap;
+            margin-bottom: .4rem
+        }
+        .modifier-item select,
+        .modifier-item input {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: .4rem;
+            padding: .2rem .4rem;
+            color: #f0f0f0;
+            font-size: .8rem;
+            outline: none
+        }
+        .modifier-item select:focus,
+        .modifier-item input:focus {
+            border-color: #3b82f6
+        }
+        .modifier-item .level-input {
+            width: 3rem
+        }
+        .modifier-item .count-input {
+            width: 2.8rem
+        }
+        .modifier-item .btn-sm {
+            padding: .15rem .5rem;
+            font-size: .7rem;
+            border-radius: .3rem;
+            background: #2d2d2d;
+            color: #ccc;
+            border: none;
+            cursor: pointer;
+            transition: .2s
+        }
+        .modifier-item .btn-sm:hover {
+            background: #4b5563
+        }
+        .modifier-item .btn-sm.danger {
+            background: #7f1d1d
+        }
+        .modifier-item .btn-sm.danger:hover {
+            background: #b91c1c
+        }
+        .modifier-item .label-tag {
+            font-size: .6rem;
+            color: #6b7280;
+            margin-left: -0.2rem;
+            margin-right: 0.1rem
+        }
+        .batch-area {
+            background: #0f0f1a;
+            border-radius: .75rem;
+            padding: .75rem;
+            border: 1px solid #2d2d2d;
+            margin-top: .5rem
+        }
+        .batch-area .grid {
+            gap: .5rem
+        }
+        .history-list {
+            max-height: 120px;
+            overflow-y: auto;
+            background: #0f0f1a;
+            border-radius: .5rem;
+            padding: .25rem
+        }
+        .history-item {
+            padding: .2rem .5rem;
+            font-size: .75rem;
+            border-bottom: 1px solid #262626;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between
+        }
+        .history-item:hover {
+            background: #1a1a2a
+        }
+        .select-all-bar {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding: .2rem 0 .5rem 0;
+            border-bottom: 1px solid #2d2d2d;
+            margin-bottom: .5rem
+        }
+        .select-all-bar input[type="checkbox"] {
+            width: 1.1rem;
+            height: 1.1rem;
+            accent-color: #3b82f6;
+            cursor: pointer
+        }
+        .select-all-bar label {
+            font-size: .8rem;
+            color: #9ca3af;
+            cursor: pointer
+        }
+        .select-all-bar .count {
+            margin-left: auto;
+            font-size: .75rem;
+            color: #6b7280
+        }
+        .sort-bar {
+            display: flex;
+            gap: .5rem;
+            align-items: center;
+            margin-bottom: .5rem;
+            flex-wrap: wrap
+        }
+        .sort-bar label {
+            font-size: .75rem;
+            color: #9ca3af
+        }
+        .sort-bar select {
+            background: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .4rem;
+            padding: .2rem .5rem;
+            color: #f0f0f0;
+            font-size: .8rem;
+            outline: none
+        }
+        .sort-bar select:focus {
+            border-color: #3b82f6
+        }
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+            transition: opacity .3s;
+        }
+        .progress-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .progress-box {
+            background: #1e1e2e;
+            border-radius: 1.5rem;
+            padding: 2rem 2.5rem;
+            max-width: 90vw;
+            width: 400px;
+            text-align: center;
+            border: 1px solid #3b82f6;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+        .progress-box .title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #93c5fd;
+            margin-bottom: .5rem;
+        }
+        .progress-box .sub {
+            font-size: .85rem;
+            color: #9ca3af;
+            margin-bottom: 1.2rem;
+        }
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: #2d2d3d;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: .6rem;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 4px;
+            transition: width .15s ease;
+        }
+        .progress-text {
+            font-size: .8rem;
+            color: #6b7280;
+        }
+        .progress-text strong {
+            color: #e5e5e5;
+        }
+        @media(max-width:768px) {
+            .weapon-list-container {
+                max-height: 30vh;
+                min-height: 100px
+            }
+            .weapon-card {
+                padding: .5rem .6rem
+            }
+            .card .p-4 {
+                padding: .75rem
+            }
+            .form-label {
+                font-size: .7rem
+            }
+            .batch-area .grid {
+                grid-template-columns: 1fr 1fr
+            }
+            .batch-area .grid>div {
+                min-width: 0
+            }
+            .modifier-item {
+                padding: .4rem .5rem;
+                gap: .3rem
+            }
+            .modifier-item select,
+            .modifier-item input {
+                font-size: .7rem;
+                padding: .15rem .3rem
+            }
+            .modifier-item .label-tag {
+                font-size: .5rem
+            }
+            .tab-nav a.nav-link {
+                font-size: .75rem;
+                padding: .5rem .5rem
+            }
+            .tab-nav a.nav-link i {
+                font-size: .75rem
+            }
+            .sort-bar {
+                flex-wrap: wrap
+            }
+            .sort-bar select {
+                font-size: .7rem;
+                padding: .1rem .3rem
+            }
+            .progress-box {
+                padding: 1.5rem;
+                width: 90vw;
+            }
+        }
+        @media(max-width:480px) {
+            .batch-area .grid {
+                grid-template-columns: 1fr
+            }
+        }
+        .nav-link {
+            color: #9ca3af;
+            transition: all .2s;
+            text-decoration: none;
+            padding: .7rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            font-weight: 500;
+            font-size: .9rem;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover {
+            color: #e5e5e5;
+            background: #1e1e2e;
+            text-decoration: none;
+        }
+        .nav-link.active {
+            color: #60a5fa;
+            border-bottom-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.08);
+        }
+        .nav-link i {
+            font-size: .9rem;
+        }
+        .tab-nav {
+            display: flex;
+            gap: 0;
+            background: #1a1a1a;
+            border-radius: .75rem;
+            border: 1px solid #2d2d2d;
+            overflow: hidden;
+            margin-bottom: 1.5rem
+        }
+        .tab-nav a.nav-link {
+            flex: 1;
+            padding: .7rem 1rem;
+            background: transparent;
+            color: #9ca3af;
+            font-size: .9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            border-bottom: 2px solid transparent;
+            text-decoration: none;
+            border-radius: 0
+        }
+        .tab-nav a.nav-link:hover {
+            color: #e5e5e5;
+            background: #1e1e2e;
+            text-decoration: none
+        }
+        .tab-nav a.nav-link.active {
+            color: #60a5fa;
+            border-bottom-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.08)
+        }
+        .tab-nav a.nav-link i {
+            font-size: .9rem
+        }
+        .tab-nav a.nav-link:first-child {
+            border-radius: .75rem 0 0 .75rem
+        }
+        .tab-nav a.nav-link:last-child {
+            border-radius: 0 .75rem .75rem 0
+        }
+        .tab-nav a.nav-link:first-child.active {
+            border-radius: .75rem 0 0 .75rem
+        }
+        .tab-nav a.nav-link:last-child.active {
+            border-radius: 0 .75rem .75rem 0
+        }
+        .tab-nav a.nav-link:only-child.active {
+            border-radius: .75rem
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-gradient-to-r from-slate-900 via-gray-900 to-indigo-900 border-b border-indigo-500/30 sticky top-0 z-50 shadow-2xl backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-dungeon text-indigo-400 text-xl"></i>
+                <div>
+                    <h1 class="text-lg font-bold bg-gradient-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">世界盒子武器修改器</h1>
+                    <p class="text-[10px] text-gray-400 hidden xs:block">武器属性 · 批量编辑 · 一键修改</p>
+                </div>
+            </div>
+            <div class="badge-version text-xs px-2 py-0.5 rounded-full text-indigo-300 font-mono flex items-center gap-1">
+                <span id="file-badge">未加载</span>
+                <i class="fa-regular fa-circle-check text-emerald-400 hidden" id="loaded-icon"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-2">
+        <div id="statusArea" class="status-message fade-in"></div>
+
+        <div class="tab-nav" id="mainTabs">
+            <a href="武器修改.html" class="nav-link active" data-tab="weapon"><i class="fa-solid fa-sword"></i> 武器修改</a>
+            <a href="王国与村庄修改.html" class="nav-link" data-tab="kingdom"><i class="fa-solid fa-crown"></i> 王国与村庄修改</a>
+            <a href="生物修改.html" class="nav-link" data-tab="actor"><i class="fa-solid fa-user"></i> 生物修改</a>
+        </div>
+
+        <div id="uploadSection" class="card p-4">
+            <div class="flex items-center gap-2 border-b border-gray-800 pb-2 mb-3">
+                <i class="fa-solid fa-cloud-upload-alt text-indigo-400"></i>
+                <h2 class="text-base font-semibold text-indigo-300">上传存档</h2>
+            </div>
+            <div class="file-upload-wrapper" id="dropZone">
+                <input type="file" id="fileInput" accept=".json">
+                <i class="fa-solid fa-file-json text-3xl text-indigo-400/60 mb-1"></i>
+                <p class="text-sm text-gray-400 font-medium" id="fileNameDisplay">点击或拖拽 .json 存档文件至此</p>
+                <p class="text-xs text-gray-500 mt-0.5">世界盒子存档 · 本地处理</p>
+            </div>
+        </div>
+
+        <div id="editorContainer" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+                <div class="lg:col-span-5 card p-3">
+                    <div class="flex items-center gap-2 border-b border-gray-800 pb-2 mb-2">
+                        <i class="fa-solid fa-list-ul text-indigo-400"></i>
+                        <h2 class="text-base font-semibold text-indigo-300">武器列表</h2>
+                        <span class="ml-auto text-xs text-gray-500" id="itemCount">0 件</span>
+                    </div>
+                    <div class="flex gap-2 mb-2 flex-wrap">
+                        <div class="relative flex-1 min-w-[100px]">
+                            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
+                            <input type="text" id="searchInput" placeholder="搜索..." class="custom-input custom-input-sm pl-8 w-full">
+                        </div>
+                        <select id="typeFilter" class="form-select text-sm flex-1 min-w-[80px]">
+                            <option value="">全部类型</option>
+                        </select>
+                    </div>
+                    <div class="sort-bar">
+                        <label>排序：</label>
+                        <select id="sortSelect">
+                            <option value="default">默认顺序</option>
+                            <option value="name">按名称</option>
+                            <option value="durability">按耐久</option>
+                            <option value="kills">按击杀数</option>
+                        </select>
+                    </div>
+                    <div class="select-all-bar">
+                        <input type="checkbox" id="selectAllCheck">
+                        <label for="selectAllCheck">全选</label>
+                        <span class="count" id="selectedCount">已选 0</span>
+                    </div>
+                    <div class="weapon-list-container" id="weaponList">
+                        <div class="empty-state"><i class="fa-regular fa-shield-halved"></i>请上传存档文件</div>
+                    </div>
+                </div>
+                <div class="lg:col-span-7 card p-3">
+                    <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-3 flex-wrap gap-1">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-pen-to-square text-indigo-400"></i>
+                            <h2 class="text-base font-semibold text-indigo-300">属性编辑</h2>
+                        </div>
+                        <div class="flex gap-1">
+                            <button id="undoBtn" class="btn-secondary text-white px-2 py-1 rounded-lg text-xs flex items-center gap-1"><i class="fa-solid fa-rotate-left"></i></button>
+                            <button id="historyToggle" class="btn-secondary text-white px-2 py-1 rounded-lg text-xs flex items-center gap-1"><i class="fa-regular fa-clock"></i></button>
+                            <button id="downloadBtn" class="btn-success text-white px-3 py-1 rounded-lg text-xs flex items-center gap-1"><i class="fa-solid fa-download"></i>下载</button>
+                        </div>
+                    </div>
+                    <div id="historyPanel" class="hidden mb-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-400">历史记录 (点击恢复)</span>
+                            <button id="clearHistoryBtn" class="text-xs text-red-400 hover:text-red-300">清空</button>
+                        </div>
+                        <div class="history-list" id="historyList"></div>
+                    </div>
+                    <div id="formEmptyState" class="empty-state py-8">
+                        <i class="fa-regular fa-hand-pointer"></i>
+                        <p class="text-sm">请在左侧选择一件武器</p>
+                    </div>
+                    <form id="editForm" class="hidden space-y-3">
+                        <div>
+                            <label class="form-label"><i class="fa-solid fa-tag mr-1"></i>名称</label>
+                            <input type="text" id="editName" class="form-input" placeholder="无">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div><label class="form-label"><i class="fa-solid fa-shield-cat mr-1"></i>种类</label>
+                                <select id="editType" class="form-select"></select>
+                            </div>
+                            <div id="materialDiv"><label class="form-label"><i class="fa-solid fa-gem mr-1"></i>材质</label>
+                                <select id="editMaterial" class="form-select"></select>
+                            </div>
+                        </div>
+                        <div class="text-xs text-gray-500">Asset ID: <span id="previewAssetId" class="font-mono text-blue-400">—</span></div>
+                        <hr class="border-gray-700">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div><label class="form-label"><i class="fa-solid fa-heart-pulse mr-1"></i>当前耐久</label>
+                                <input type="number" id="editDurability" min="0" max="2147483647" class="form-input">
+                            </div>
+                            <div><label class="form-label"><i class="fa-solid fa-skull mr-1"></i>击杀数</label>
+                                <input type="number" id="editKills" min="0" max="2147483647" class="form-input">
+                            </div>
+                        </div>
+                        <div><label class="form-label"><i class="fa-solid fa-user-pen mr-1"></i>制造者</label>
+                            <input type="text" id="editBy" class="form-input" placeholder="例如：Steve">
+                        </div>
+                        <div><label class="form-label"><i class="fa-solid fa-flag mr-1"></i>国家</label>
+                            <input type="text" id="editFrom" class="form-input" placeholder="例如：Human Empire">
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between">
+                                <label class="form-label"><i class="fa-solid fa-list-check mr-1"></i>附加属性</label>
+                                <button type="button" id="addModifierBtn" class="btn-secondary text-white px-2 py-0.5 text-xs rounded"><i class="fa-solid fa-plus"></i> 添加</button>
+                            </div>
+                            <div id="modifierList" class="space-y-1 mt-1"></div>
+                        </div>
+                        <div class="pt-1 flex gap-2">
+                            <button type="button" id="saveBtn" class="flex-1 btn-primary text-white font-medium rounded-lg px-4 py-2 text-sm"><i class="fa-solid fa-check mr-1"></i>确认修改</button>
+                            <button type="button" id="resetSelectionBtn" class="btn-secondary text-white px-3 py-2 rounded-lg text-sm"><i class="fa-solid fa-undo"></i></button>
+                        </div>
+                    </form>
+                    <div class="batch-area mt-3">
+                        <div class="flex items-center gap-2 cursor-pointer" id="batchToggle">
+                            <i class="fa-solid fa-layer-group text-indigo-400"></i>
+                            <span class="text-sm font-medium text-indigo-300">批量修改 (勾选武器)</span>
+                            <i class="fa-solid fa-chevron-down text-xs text-gray-500 ml-auto"></i>
+                        </div>
+                        <div id="batchContent" class="hidden mt-2 space-y-2">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <div><label class="form-label text-xs">种类</label>
+                                    <select id="batchType" class="form-select text-sm"><option value="">不变</option></select>
+                                </div>
+                                <div><label class="form-label text-xs">材质</label>
+                                    <select id="batchMaterial" class="form-select text-sm"><option value="">不变</option></select>
+                                </div>
+                                <div><label class="form-label text-xs">耐久</label>
+                                    <select id="batchDurabilityOp" class="form-select text-sm"><option value="set">设为</option><option value="add">增加</option><option value="sub">减少</option></select>
+                                    <input type="number" id="batchDurabilityVal" class="form-input text-sm mt-0.5" value="0">
+                                </div>
+                                <div><label class="form-label text-xs">击杀</label>
+                                    <select id="batchKillsOp" class="form-select text-sm"><option value="set">设为</option><option value="add">增加</option><option value="sub">减少</option></select>
+                                    <input type="number" id="batchKillsVal" class="form-input text-sm mt-0.5" value="0">
+                                </div>
+                                <div><label class="form-label text-xs">制造者</label>
+                                    <input type="text" id="batchBy" class="form-input text-sm" placeholder="留空不变">
+                                </div>
+                                <div><label class="form-label text-xs">国家</label>
+                                    <input type="text" id="batchFrom" class="form-input text-sm" placeholder="留空不变">
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-2 items-center">
+                                <label class="form-label text-xs">名称前缀</label>
+                                <input type="text" id="batchNamePrefix" class="form-input text-sm w-24" placeholder="前缀">
+                                <label class="form-label text-xs">后缀</label>
+                                <input type="text" id="batchNameSuffix" class="form-input text-sm w-24" placeholder="后缀">
+                            </div>
+                            <div class="flex flex-wrap gap-2 items-center">
+                                <label class="form-label text-xs">添加Modifier</label>
+                                <select id="batchAddModType" class="form-select text-sm w-24">
+                                    <option value="power">力量</option><option value="speed">速度</option><option value="balance">协调</option><option value="health">健康</option><option value="flame">灼烧</option><option value="ice">冰冻</option><option value="poison">淬毒</option><option value="slowness">减速</option><option value="truth">诚信</option><option value="protection">保护</option><option value="finesse">技巧</option><option value="mastery">精通</option><option value="knowledge">学问</option><option value="sharpness">锋利</option>
+                                </select>
+                                <span class="text-[10px] text-gray-500">等级</span>
+                                <input type="number" id="batchAddModLevel" class="form-input text-sm w-12" min="1" max="5" value="1">
+                                <span class="text-[10px] text-gray-500">数量</span>
+                                <input type="number" id="batchAddModCount" class="form-input text-sm w-12" min="1" max="20" value="1">
+                                <button type="button" id="batchAddModBtn" class="btn-secondary text-white px-2 py-0.5 text-xs rounded">添加</button>
+                                <label class="form-label text-xs ml-1">移除Modifier</label>
+                                <select id="batchRemoveModType" class="form-select text-sm w-24">
+                                    <option value="">选择</option>
+                                </select>
+                                <button type="button" id="batchRemoveModBtn" class="btn-danger text-white px-2 py-0.5 text-xs rounded">移除</button>
+                            </div>
+                            <div class="flex gap-2 flex-wrap">
+                                <button id="batchApplyBtn" class="btn-primary text-white px-4 py-1 rounded text-sm">应用到勾选</button>
+                                <button id="batchApplyAllBtn" class="btn-secondary text-white px-4 py-1 rounded text-sm">应用到全部</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="progressOverlay" class="progress-overlay hidden">
+        <div class="progress-box">
+            <div class="title"><i class="fa-solid fa-spinner fa-pulse mr-2"></i>加载存档</div>
+            <div class="sub" id="progressSub">正在读取文件...</div>
+            <div class="progress-track"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+            <div class="progress-text"><span id="progressPercent">0</span>%</div>
+        </div>
+    </div>
+
+    <footer class="text-center text-gray-500 text-xs py-4 border-t border-gray-800 mt-4"><i class="fa-regular fa-gem text-indigo-500"></i> 本地处理 · 隐私安全 · 一键修改</footer>
+
+    <script>
+        (function() {
+            const TYPES = { stick: '木棍', sword: '剑', spear: '矛', hammer: '锤', axe: '斧', bow: '弓', armor: '胸甲',
+                helmet: '头盔', boots: '靴子', ring: '戒指', amulet: '护符', druid_staff: '德鲁伊法杖',
+                necromancer_staff: '死灵法杖', plague_doctor_staff: '疫医法杖', white_staff: '白色法杖',
+                evil_staff: '邪恶法杖', alien_blaster: '外星枪', flame_sword: '火焰之剑', shotgun: '霰弹枪' };
+            const MATERIALS = { wood: '木', stone: '石', leather: '皮革', bone: '骨头', copper: '铜', bronze: '青铜',
+                silver: '银', iron: '铁', steel: '钢', mythril: '秘银', adamantine: '精金' };
+            const SPECIAL_TYPES = ['druid_staff', 'necromancer_staff', 'plague_doctor_staff', 'white_staff',
+                'evil_staff', 'alien_blaster', 'flame_sword', 'shotgun'
+            ];
+            const ALLOWED_MATERIALS = { stick: ['wood'], sword: ['wood', 'stone', 'copper', 'bronze', 'silver',
+                    'iron', 'steel', 'mythril', 'adamantine'
+                ], spear: ['wood', 'stone', 'copper', 'bronze', 'silver', 'iron', 'steel', 'mythril',
+                    'adamantine'
+                ], hammer: ['wood', 'stone', 'copper', 'bronze', 'silver', 'iron', 'steel', 'mythril',
+                    'adamantine'
+                ], axe: ['wood', 'stone', 'copper', 'bronze', 'silver', 'iron', 'steel', 'mythril',
+                    'adamantine'
+                ], bow: ['wood'], armor: ['leather', 'copper', 'bronze', 'silver', 'iron', 'steel', 'mythril',
+                    'adamantine'
+                ], helmet: ['leather', 'copper', 'bronze', 'silver', 'iron', 'steel', 'mythril',
+                    'adamantine'
+                ], boots: ['leather', 'copper', 'bronze', 'silver', 'iron', 'steel', 'mythril',
+                    'adamantine'
+                ], ring: ['bone', 'copper', 'bronze', 'silver', 'iron', 'steel', 'mythril', 'adamantine'],
+                amulet: ['bone', 'copper', 'bronze', 'silver', 'iron', 'steel', 'mythril', 'adamantine'] };
+            const MODIFIER_NAMES = { power: '力量', truth: '诚信', protection: '保护', speed: '速度', balance: '协调',
+                health: '健康', finesse: '技巧', mastery: '精通', knowledge: '学问', sharpness: '锋利', flame: '灼烧',
+                ice: '冰冻', slowness: '减速', poison: '淬毒' };
+            const MODIFIER_TYPES = Object.keys(MODIFIER_NAMES);
+            const LEVEL_MODS = ['power', 'truth', 'protection', 'speed', 'balance', 'health', 'finesse', 'mastery',
+                'knowledge', 'sharpness'
+            ];
+            const MAX_INT = 2147483647;
+
+            let saveData = null,
+                items = [],
+                filtered = [],
+                selectedIdx = -1,
+                searchText = '',
+                typeFilter = '',
+                sortKey = 'default',
+                history = [],
+                historyIndex = -1,
+                maxHistory = 30,
+                selectedSet = new Set(),
+                currentModifiers = [];
+
+            const $ = id => document.getElementById(id);
+            const el = (s, ctx) => (ctx || document).querySelector(s);
+            const all = (s, ctx) => (ctx || document).querySelectorAll(s);
+
+            function escapeHtml(str) { if (!str) return ''; return String(str).replace(/[&<>"']/g, function(m) { if (m ===
+                        '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; if (m ===
+                        '"') return '&quot;'; if (m === "'") return '&#039;'; return m; }) }
+
+            const fileInput = $('fileInput'),
+                dropZone = $('dropZone'),
+                fileNameDisplay = $('fileNameDisplay'),
+                fileBadge = $('file-badge'),
+                loadedIcon = $('loaded-icon');
+            const uploadSection = $('uploadSection'),
+                editorContainer = $('editorContainer');
+            const statusArea = $('statusArea'),
+                weaponList = $('weaponList'),
+                searchInput = $('searchInput'),
+                itemCount = $('itemCount');
+            const editForm = $('editForm'),
+                formEmpty = $('formEmptyState');
+            const editType = $('editType'),
+                editMaterial = $('editMaterial'),
+                previewAssetId = $('previewAssetId');
+            const editDurability = $('editDurability'),
+                editKills = $('editKills'),
+                editBy = $('editBy'),
+                editFrom = $('editFrom'),
+                editName = $('editName');
+            const saveBtn = $('saveBtn'),
+                downloadBtn = $('downloadBtn'),
+                resetSelectionBtn = $('resetSelectionBtn');
+            const materialDiv = $('materialDiv');
+            const modifierList = $('modifierList');
+            const addModifierBtn = $('addModifierBtn');
+            const typeFilterEl = $('typeFilter');
+            const sortSelect = $('sortSelect');
+            const batchToggle = $('batchToggle'),
+                batchContent = $('batchContent');
+            const batchType = $('batchType'),
+                batchMaterial = $('batchMaterial');
+            const batchDurabilityOp = $('batchDurabilityOp'),
+                batchDurabilityVal = $('batchDurabilityVal');
+            const batchKillsOp = $('batchKillsOp'),
+                batchKillsVal = $('batchKillsVal');
+            const batchBy = $('batchBy'),
+                batchFrom = $('batchFrom');
+            const batchNamePrefix = $('batchNamePrefix'),
+                batchNameSuffix = $('batchNameSuffix');
+            const batchAddModType = $('batchAddModType'),
+                batchAddModLevel = $('batchAddModLevel'),
+                batchAddModCount = $('batchAddModCount'),
+                batchAddModBtn = $('batchAddModBtn');
+            const batchRemoveModType = $('batchRemoveModType'),
+                batchRemoveModBtn = $('batchRemoveModBtn');
+            const batchApplyBtn = $('batchApplyBtn'),
+                batchApplyAllBtn = $('batchApplyAllBtn');
+            const historyPanel = $('historyPanel'),
+                historyList = $('historyList'),
+                historyToggle = $('historyToggle'),
+                undoBtn = $('undoBtn'),
+                clearHistoryBtn = $('clearHistoryBtn');
+            const selectAllCheck = $('selectAllCheck'),
+                selectedCount = $('selectedCount');
+            const progressOverlay = $('progressOverlay'),
+                progressBar = $('progressBar'),
+                progressPercent = $('progressPercent'),
+                progressSub = $('progressSub');
+
+            function showStatus(msg, type) {
+                statusArea.className = 'status-message fade-in';
+                if (type) statusArea.classList.add(type);
+                statusArea.innerHTML = `<i class="fa-regular fa-bell mr-2"></i> ${escapeHtml(msg)}`;
+                statusArea.style.display = 'block';
+                setTimeout(() => statusArea.style.display = 'none', 4000);
+            }
+
+            function pushHistory() {
+                const snapshot = { timestamp: Date.now(), items: JSON.parse(JSON.stringify(items)) };
+                if (historyIndex < history.length - 1) history = history.slice(0, historyIndex + 1);
+                history.push(snapshot);
+                if (history.length > maxHistory) history.shift();
+                historyIndex = history.length - 1;
+                renderHistory();
+            }
+
+            function renderHistory() {
+                historyList.innerHTML = '';
+                if (!history.length) { historyList.innerHTML = '<div class="text-xs text-gray-500 p-1">无历史</div>';
+                    return }
+                history.forEach((h, i) => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    const timeStr = new Date(h.timestamp).toLocaleTimeString();
+                    div.innerHTML =
+                        `<span>#${i+1} (武器${h.items.length}) ${i===historyIndex?'⬅️':''}</span><span class="text-gray-500">${timeStr}</span>`;
+                    div.addEventListener('click', () => { if (i >= 0 && i < history.length) { historyIndex =
+                                i;
+                            const snap = history[i];
+                            items = JSON.parse(JSON.stringify(snap.items));
+                            selectedIdx = -1;
+                            selectedSet.clear();
+                            editForm.classList.add('hidden');
+                            formEmpty.classList.remove('hidden');
+                            renderList();
+                            showStatus(`恢复到历史 #${i+1}`, 'info');
+                            renderHistory() } });
+                    historyList.appendChild(div);
+                });
+                historyList.scrollTop = historyList.scrollHeight;
+            }
+
+            function populateDropdowns() {
+                const typeOpts = Object.keys(TYPES);
+                typeFilterEl.innerHTML = '<option value="">全部类型</option>';
+                typeOpts.forEach(k => { const o = document.createElement('option');
+                    o.value = k;
+                    o.textContent = TYPES[k];
+                    typeFilterEl.appendChild(o) });
+                editType.innerHTML = '';
+                typeOpts.forEach(k => { const o = document.createElement('option');
+                    o.value = k;
+                    o.textContent = `${TYPES[k]} (${k})`;
+                    editType.appendChild(o) });
+                batchType.innerHTML = '<option value="">不变</option>';
+                typeOpts.forEach(k => { const o = document.createElement('option');
+                    o.value = k;
+                    o.textContent = TYPES[k];
+                    batchType.appendChild(o) });
+                batchMaterial.innerHTML = '<option value="">不变</option>';
+                Object.keys(MATERIALS).forEach(k => { const o = document.createElement('option');
+                    o.value = k;
+                    o.textContent = MATERIALS[k];
+                    batchMaterial.appendChild(o) });
+                batchRemoveModType.innerHTML = '<option value="">选择</option>';
+                MODIFIER_TYPES.forEach(t => { const o = document.createElement('option');
+                    o.value = t;
+                    o.textContent = MODIFIER_NAMES[t] + ' (' + t + ')';
+                    batchRemoveModType.appendChild(o) });
+                updateMaterialOptions(editType.value);
+            }
+
+            function updateMaterialOptions(type) {
+                const allowed = ALLOWED_MATERIALS[type] || [];
+                const isSpecial = SPECIAL_TYPES.includes(type);
+                editMaterial.innerHTML = '';
+                if (isSpecial || allowed.length === 0) { materialDiv.classList.add('hidden');
+                    editMaterial.disabled = true;
+                    editMaterial.value = '';
+                    previewAssetId.textContent = type; return }
+                materialDiv.classList.remove('hidden');
+                editMaterial.disabled = false;
+                allowed.forEach(k => { const o = document.createElement('option');
+                    o.value = k;
+                    o.textContent = `${MATERIALS[k]||k} (${k})`;
+                    editMaterial.appendChild(o) });
+                if (editMaterial.options.length > 0) editMaterial.value = editMaterial.options[0].value;
+                else editMaterial.value = '';
+                updatePreview();
+            }
+
+            function parseModifier(str) {
+                const match = str.match(/^([a-z]+)(\d+)?$/);
+                if (!match) return null;
+                const type = match[1];
+                if (!MODIFIER_TYPES.includes(type)) return null;
+                const level = match[2] ? parseInt(match[2]) : null;
+                if (LEVEL_MODS.includes(type) && (level === null || level < 1 || level > 5)) return null;
+                if (!LEVEL_MODS.includes(type) && level !== null) return null;
+                return { type, level };
+            }
+
+            function formatModifier(mod) { if (!mod) return ''; if (mod.level !== undefined && mod.level !== null)
+                    return mod.type + mod.level; return mod.type }
+
+            function loadModifiersFromItem(item) {
+                const map = {};
+                if (item.modifiers && Array.isArray(item.modifiers)) {
+                    item.modifiers.forEach(str => {
+                        const parsed = parseModifier(str);
+                        if (parsed) {
+                            const key = parsed.type + (parsed.level !== null ? '|' + parsed.level : '');
+                            if (!map[key]) map[key] = { type: parsed.type, level: parsed.level, count: 0 };
+                            map[key].count++;
+                        }
+                    });
+                }
+                currentModifiers = Object.values(map);
+                renderModifiers();
+            }
+
+            function collectModifiers() {
+                const result = [];
+                currentModifiers.forEach(mod => { const base = formatModifier(mod); if (base) { for (let i = 0; i < (
+                            mod.count || 1); i++) result.push(base) } });
+                return result;
+            }
+
+            function renderModifiers() {
+                if (!currentModifiers.length) { modifierList.innerHTML =
+                        `<div class="text-xs text-gray-500 py-1">无附加属性，点击 "添加" 增加</div>`; return }
+                let html = '';
+                currentModifiers.forEach((mod, idx) => {
+                    const hasLevel = LEVEL_MODS.includes(mod.type);
+                    const count = mod.count || 1;
+                    html += `<div class="modifier-item" data-index="${idx}">
+                        <select class="mod-type">${MODIFIER_TYPES.map(t => `<option value="${t}" ${t===mod.type?'selected':''}>${MODIFIER_NAMES[t]} (${t})</option>`).join('')}</select>
+                        ${hasLevel ? `<span class="label-tag">等级</span><input type="number" class="level-input" min="1" max="5" value="${mod.level||1}">` : ''}
+                        <span class="label-tag">数量</span><input type="number" class="count-input" min="1" max="20" value="${count}">
+                        <button type="button" class="btn-sm move-up" ${idx===0?'disabled':''}><i class="fa-solid fa-arrow-up"></i></button>
+                        <button type="button" class="btn-sm move-down" ${idx===currentModifiers.length-1?'disabled':''}><i class="fa-solid fa-arrow-down"></i></button>
+                        <button type="button" class="btn-sm danger remove-mod"><i class="fa-solid fa-xmark"></i></button>
+                    </div>`;
+                });
+                modifierList.innerHTML = html;
+                modifierList.querySelectorAll('.modifier-item').forEach((div, idx) => {
+                    const typeSel = div.querySelector('.mod-type');
+                    const levelInp = div.querySelector('.level-input');
+                    const countInp = div.querySelector('.count-input');
+                    typeSel.addEventListener('change', function() {
+                        const newType = this.value;
+                        const has = LEVEL_MODS.includes(newType);
+                        const mod = currentModifiers[idx];
+                        mod.type = newType;
+                        if (has && (mod.level === undefined || mod.level === null)) mod.level = 1;
+                        if (!has) mod.level = null;
+                        renderModifiers();
+                    });
+                    if (levelInp) {
+                        levelInp.addEventListener('input', function() {
+                            let val = parseInt(this.value);
+                            if (isNaN(val) || val < 1) val = 1;
+                            if (val > 5) val = 5;
+                            currentModifiers[idx].level = val;
+                        });
+                    }
+                    if (countInp) {
+                        countInp.addEventListener('input', function() {
+                            let val = parseInt(this.value);
+                            if (isNaN(val) || val < 1) val = 1;
+                            if (val > 20) val = 20;
+                            currentModifiers[idx].count = val;
+                        });
+                    }
+                    div.querySelector('.move-up')?.addEventListener('click', function() {
+                        if (idx > 0) { [currentModifiers[idx - 1], currentModifiers[idx]] = [currentModifiers[
+                                idx], currentModifiers[idx - 1]];
+                            renderModifiers() }
+                    });
+                    div.querySelector('.move-down')?.addEventListener('click', function() {
+                        if (idx < currentModifiers.length - 1) { [currentModifiers[idx + 1], currentModifiers[
+                                idx]] = [currentModifiers[idx], currentModifiers[idx + 1]];
+                            renderModifiers() }
+                    });
+                    div.querySelector('.remove-mod')?.addEventListener('click', function() {
+                        currentModifiers.splice(idx, 1);
+                        renderModifiers();
+                    });
+                });
+            }
+
+            function updateSelectAllState() {
+                const visible = filtered.map(f => f._idx);
+                const checked = visible.filter(i => selectedSet.has(i));
+                const allChecked = visible.length > 0 && checked.length === visible.length;
+                selectAllCheck.checked = allChecked;
+                selectedCount.textContent = `已选 ${checked.length}`;
+            }
+
+            function renderList() {
+                if (!items.length) {
+                    weaponList.innerHTML =
+                    `<div class="empty-state"><i class="fa-regular fa-shield-halved"></i>无武器数据</div>`;
+                    itemCount.textContent = '0 件';
+                    updateSelectAllState();
+                    return;
+                }
+                const query = searchText.toLowerCase();
+                filtered = items.map((it, i) => ({ ...it, _idx: i })).filter(it => {
+                    if (typeFilter && it.asset_id) { const t = it.asset_id.split('_')[0]; if (t !== typeFilter)
+                            return false }
+                    if (!query) return true;
+                    const by = (it.by || '').toLowerCase(),
+                        from = (it.from || '').toLowerCase(),
+                        name = (it.name || '').toLowerCase();
+                    return by.includes(query) || from.includes(query) || name.includes(query);
+                });
+                if (sortKey !== 'default') {
+                    filtered.sort((a, b) => {
+                        let va = 0,
+                            vb = 0;
+                        if (sortKey === 'name') { va = (a.name || '').toLowerCase();
+                            vb = (b.name || '').toLowerCase(); return va.localeCompare(vb) } else if (
+                            sortKey === 'durability') { va = a.durability || 0;
+                            vb = b.durability || 0 } else if (sortKey === 'kills') { va = a.kills || 0;
+                            vb = b.kills || 0 }
+                        return vb - va;
+                    });
+                }
+                itemCount.textContent = `${items.length} 件${filtered.length < items.length ? ` (显示 ${filtered.length})` : ''}`;
+                if (!filtered.length) {
+                    weaponList.innerHTML =
+                    `<div class="empty-state"><i class="fa-regular fa-filter-circle-xmark"></i>无匹配结果</div>`;
+                    updateSelectAllState();
+                    return;
+                }
+                let html = '';
+                filtered.forEach(it => {
+                    const active = it._idx === selectedIdx ? 'active' : '';
+                    let typeLabel = it.asset_id || '未知',
+                        matLabel = '';
+                    if (it.asset_id) { const p = it.asset_id.split('_'); if (p.length === 2) { typeLabel =
+                            TYPES[p[0]] || p[0];
+                            matLabel = MATERIALS[p[1]] || p[1] } else { typeLabel = TYPES[p[0]] || p[0] } }
+                    const displayName = it.name ? it.name : '无';
+                    const modStr = (it.modifiers && it.modifiers.length) ? '✨' : '';
+                    const checked = selectedSet.has(it._idx) ? 'checked' : '';
+                    html += `<div class="weapon-card ${active}" data-idx="${it._idx}">
+                        <input type="checkbox" ${checked} class="item-checkbox">
+                        <div class="card-content" data-idx="${it._idx}">
+                            <div class="flex justify-between items-start mb-0.5">
+                                <span class="font-bold text-slate-200 text-sm truncate pr-2">${escapeHtml(displayName)}</span>
+                                <span class="text-xs text-slate-400 whitespace-nowrap">#${it._idx+1}</span>
+                            </div>
+                            <div class="text-xs text-slate-500 mb-0.5">${escapeHtml(typeLabel)} ${matLabel ? `(${escapeHtml(matLabel)})` : ''} ${modStr}</div>
+                            <div class="flex items-center gap-3 text-xs text-slate-400">
+                                <span class="truncate max-w-[120px]" title="${escapeHtml('制造者: '+(it.by||'-'))}"><i class="fa-solid fa-user text-[10px] mr-1"></i>${escapeHtml(it.by||'未知')}</span>
+                                <span class="truncate max-w-[120px]" title="${escapeHtml('国家: '+(it.from||'-'))}"><i class="fa-solid fa-flag text-[10px] mr-1"></i>${escapeHtml(it.from||'未知')}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+                weaponList.innerHTML = html;
+                weaponList.querySelectorAll('.weapon-card').forEach(card => {
+                    const idx = parseInt(card.dataset.idx);
+                    const cb = card.querySelector('.item-checkbox');
+                    cb.addEventListener('change', function(e) {
+                        e.stopPropagation();
+                        if (this.checked) selectedSet.add(idx);
+                        else selectedSet.delete(idx);
+                        updateSelectAllState();
+                    });
+                    const content = card.querySelector('.card-content');
+                    content.addEventListener('click', function(e) {
+                        if (e.target.closest('input[type="checkbox"]')) return;
+                        selectItem(idx);
+                    });
+                });
+                updateSelectAllState();
+            }
+
+            function selectItem(idx) {
+                if (idx < 0 || idx >= items.length) return;
+                selectedIdx = idx;
+                const item = items[idx];
+                editForm.classList.remove('hidden');
+                formEmpty.classList.add('hidden');
+                editName.value = item.name || '';
+                editDurability.value = item.durability ?? 0;
+                editKills.value = item.kills ?? 0;
+                editBy.value = item.by || '';
+                editFrom.value = item.from || '';
+                let typeVal = 'sword',
+                    matVal = 'iron';
+                if (item.asset_id) { const p = item.asset_id.split('_'); if (p.length === 2) { typeVal = p[0];
+                        matVal = p[1] } else { typeVal = p[0];
+                        matVal = '' } }
+                editType.value = typeVal;
+                updateMaterialOptions(typeVal);
+                if (matVal && editMaterial.querySelector(`option[value="${matVal}"]`)) editMaterial.value = matVal;
+                else { if (editMaterial.options.length > 0) editMaterial.value = editMaterial.options[0].value;
+                    else editMaterial.value = '' }
+                updatePreview();
+                loadModifiersFromItem(item);
+                renderList();
+                el('.weapon-list-container')?.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function updatePreview() {
+                const type = editType.value;
+                const isSpecial = SPECIAL_TYPES.includes(type);
+                if (isSpecial) { previewAssetId.textContent = type; return type }
+                const mat = editMaterial.value;
+                const id = mat ? `${type}_${mat}` : type;
+                previewAssetId.textContent = id;
+                return id;
+            }
+
+            function saveCurrentItem() {
+                if (selectedIdx < 0 || selectedIdx >= items.length) return;
+                pushHistory();
+                const item = items[selectedIdx];
+                let dur = parseInt(editDurability.value);
+                if (isNaN(dur) || dur < 0) dur = 0;
+                if (dur > MAX_INT) dur = MAX_INT;
+                let kills = parseInt(editKills.value);
+                if (isNaN(kills) || kills < 0) kills = 0;
+                if (kills > MAX_INT) kills = MAX_INT;
+                item.durability = dur;
+                item.kills = kills;
+                item.by = editBy.value;
+                item.from = editFrom.value;
+                const type = editType.value;
+                const isSpecial = SPECIAL_TYPES.includes(type);
+                if (isSpecial) item.asset_id = type;
+                else { const mat = editMaterial.value;
+                    item.asset_id = mat ? `${type}_${mat}` : type }
+                const nameVal = editName.value.trim();
+                if (nameVal) item.name = nameVal;
+                else delete item.name;
+                const mods = collectModifiers();
+                if (mods.length) item.modifiers = mods;
+                else delete item.modifiers;
+                renderList();
+                updatePreview();
+                showStatus('✓ 修改已保存', 'success');
+            }
+
+            function batchApply(targetList) {
+                if (!targetList.length) { showStatus('没有可应用的目标', 'warning'); return }
+                if (!confirm(`确定要批量修改 ${targetList.length} 件武器吗？`)) return;
+                pushHistory();
+                const type = batchType.value;
+                const mat = batchMaterial.value;
+                const durOp = batchDurabilityOp.value,
+                    durVal = parseInt(batchDurabilityVal.value) || 0;
+                const killOp = batchKillsOp.value,
+                    killVal = parseInt(batchKillsVal.value) || 0;
+                const by = batchBy.value.trim();
+                const from = batchFrom.value.trim();
+                const prefix = batchNamePrefix.value.trim();
+                const suffix = batchNameSuffix.value.trim();
+                const addModType = batchAddModType.value;
+                const addModLevel = parseInt(batchAddModLevel.value) || 1;
+                const addModCount = parseInt(batchAddModCount.value) || 1;
+                const removeModType = batchRemoveModType.value;
+                targetList.forEach((item) => {
+                    if (type) {
+                        const isSpecial = SPECIAL_TYPES.includes(type);
+                        if (isSpecial) item.asset_id = type;
+                        else { const curMat = mat || (item.asset_id ? item.asset_id.split('_')[1] : '');
+                            item.asset_id = curMat ? `${type}_${curMat}` : type }
+                    }
+                    if (mat) { const curType = item.asset_id ? item.asset_id.split('_')[0] : 'sword'; if (!
+                            SPECIAL_TYPES.includes(curType)) item.asset_id = `${curType}_${mat}` }
+                    if (durVal !== 0) {
+                        let cur = item.durability || 0;
+                        if (durOp === 'set') cur = durVal;
+                        else if (durOp === 'add') cur += durVal;
+                        else if (durOp === 'sub') cur -= durVal;
+                        if (cur < 0) cur = 0;
+                        if (cur > MAX_INT) cur = MAX_INT;
+                        item.durability = cur;
+                    }
+                    if (killVal !== 0) {
+                        let cur = item.kills || 0;
+                        if (killOp === 'set') cur = killVal;
+                        else if (killOp === 'add') cur += killVal;
+                        else if (killOp === 'sub') cur -= killVal;
+                        if (cur < 0) cur = 0;
+                        if (cur > MAX_INT) cur = MAX_INT;
+                        item.kills = cur;
+                    }
+                    if (by) item.by = by;
+                    if (from) item.from = from;
+                    if (prefix || suffix) { const old = item.name || '';
+                        item.name = prefix + old + suffix }
+                    if (addModType) {
+                        if (!item.modifiers) item.modifiers = [];
+                        const base = addModType + (LEVEL_MODS.includes(addModType) ? addModLevel : '');
+                        for (let i = 0; i < addModCount; i++) item.modifiers.push(base);
+                    }
+                    if (removeModType && item.modifiers) {
+                        const toRemove = item.modifiers.filter(m => { const p = parseModifier(m); return p && p
+                                .type === removeModType });
+                        if (toRemove.length) { item.modifiers = item.modifiers.filter(m => !toRemove.includes(m));
+                            if (!item.modifiers.length) delete item.modifiers }
+                    }
+                });
+                renderList();
+                if (selectedIdx >= 0) {
+                    const item = items[selectedIdx];
+                    editName.value = item.name || '';
+                    editDurability.value = item.durability ?? 0;
+                    editKills.value = item.kills ?? 0;
+                    editBy.value = item.by || '';
+                    editFrom.value = item.from || '';
+                    loadModifiersFromItem(item);
+                }
+                showStatus(`批量修改应用到 ${targetList.length} 件武器`, 'success');
+            }
+
+            function handleFile(file) {
+                if (!file) { showStatus('未选择文件', 'error'); return }
+                if (!file.name.toLowerCase().endsWith('.json')) { showStatus('请上传 .json 文件', 'error'); return }
+                progressOverlay.classList.remove('hidden');
+                progressBar.style.width = '0%';
+                progressPercent.textContent = '0';
+                progressSub.textContent = '读取文件...';
+                const reader = new FileReader();
+                reader.onprogress = function(e) {
+                    if (e.lengthComputable) { const pct = Math.round((e.loaded / e.total) * 80);
+                        progressBar.style.width = pct + '%';
+                        progressPercent.textContent = pct;
+                        progressSub.textContent = `读取中 ${pct}%` }
+                };
+                reader.onload = function(e) {
+                    progressSub.textContent = '解析数据...';
+                    progressBar.style.width = '85%';
+                    progressPercent.textContent = '85';
+                    setTimeout(() => {
+                        try {
+                            const json = JSON.parse(e.target.result);
+                            if (!json.items || !Array.isArray(json.items)) { throw new Error(
+                                    '缺少 items 数组，请确认是有效的世界盒子存档') }
+                            saveData = json;
+                            items = json.items || [];
+                            history = [];
+                            historyIndex = -1;
+                            renderHistory();
+                            selectedIdx = -1;
+                            selectedSet.clear();
+                            searchText = '';
+                            searchInput.value = '';
+                            typeFilter = '';
+                            typeFilterEl.value = '';
+                            sortKey = 'default';
+                            sortSelect.value = 'default';
+                            fileNameDisplay.innerHTML =
+                                `<i class="fa-regular fa-file-lines mr-1"></i> ${escapeHtml(file.name)} (${items.length}件武器)`;
+                            fileNameDisplay.classList.add('text-indigo-400', 'font-semibold');
+                            fileBadge.textContent = file.name;
+                            loadedIcon.classList.remove('hidden');
+                            uploadSection.classList.add('hidden');
+                            editorContainer.classList.remove('hidden');
+                            editorContainer.classList.add('fade-in');
+                            renderList();
+                            editForm.classList.add('hidden');
+                            formEmpty.classList.remove('hidden');
+                            progressBar.style.width = '100%';
+                            progressPercent.textContent = '100';
+                            progressSub.textContent = '加载完成';
+                            setTimeout(() => {
+                                progressOverlay.classList.add('hidden');
+                                showStatus(`✓ 加载成功！${items.length} 件武器`, 'success');
+                            }, 300);
+                        } catch (err) {
+                            console.error('解析错误:', err);
+                            progressOverlay.classList.add('hidden');
+                            showStatus('解析失败: ' + err.message, 'error');
+                            fileInput.value = '';
+                        }
+                    }, 50);
+                };
+                reader.onerror = function() {
+                    progressOverlay.classList.add('hidden');
+                    showStatus('读取文件失败，请检查文件权限', 'error');
+                    fileInput.value = '';
+                };
+                reader.readAsText(file, 'UTF-8');
+            }
+
+            function downloadSave() {
+                if (!saveData) { showStatus('无存档数据', 'warning'); return }
+                saveData.items = items;
+                const data = JSON.stringify(saveData, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const name = fileBadge.textContent.replace('.json', '') || 'worldbox_save';
+                a.download = `${name}_modified.json`;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => { document.body.removeChild(a);
+                    URL.revokeObjectURL(url) }, 200);
+                showStatus('存档已开始下载', 'success');
+            }
+
+            fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]) });
+            dropZone.addEventListener('dragover', e => { e.preventDefault();
+                dropZone.style.borderColor = '#3b82f6';
+                dropZone.style.backgroundColor = '#1e293b' });
+            dropZone.addEventListener('dragleave', e => { e.preventDefault();
+                dropZone.style.borderColor = '#374151';
+                dropZone.style.backgroundColor = '#0f0f1a' });
+            dropZone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropZone.style.borderColor = '#374151';
+                dropZone.style.backgroundColor = '#0f0f1a';
+                if (e.dataTransfer.files.length) { const f = e.dataTransfer.files[0]; if (f.name.toLowerCase()
+                        .endsWith('.json')) { fileInput.files = e.dataTransfer.files;
+                        handleFile(f) } else showStatus('请拖入 .json 文件', 'error') }
+            });
+
+            searchInput.addEventListener('input', function() { searchText = this.value;
+                renderList() });
+            typeFilterEl.addEventListener('change', function() { typeFilter = this.value;
+                renderList() });
+            sortSelect.addEventListener('change', function() { sortKey = this.value;
+                renderList() });
+            editType.addEventListener('change', function() { updateMaterialOptions(this.value);
+                updatePreview() });
+            editMaterial.addEventListener('change', updatePreview);
+            saveBtn.addEventListener('click', function() { if (selectedIdx < 0) { showStatus('请先选择武器', 'warning');
+                    return } saveCurrentItem() });
+            downloadBtn.addEventListener('click', downloadSave);
+            resetSelectionBtn.addEventListener('click', function() { selectedIdx = -1;
+                editForm.classList.add('hidden');
+                formEmpty.classList.remove('hidden');
+                renderList();
+                showStatus('已取消选择', 'info') });
+            addModifierBtn.addEventListener('click', function() { currentModifiers.push({ type: 'power', level: 1,
+                    count: 1 });
+                renderModifiers() });
+            undoBtn.addEventListener('click', function() {
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    const snap = history[historyIndex];
+                    items = JSON.parse(JSON.stringify(snap.items));
+                    selectedIdx = -1;
+                    selectedSet.clear();
+                    editForm.classList.add('hidden');
+                    formEmpty.classList.remove('hidden');
+                    renderList();
+                    showStatus('已撤销', 'info');
+                } else showStatus('没有更早的历史', 'warning');
+                renderHistory();
+                updateSelectAllState();
+            });
+            historyToggle.addEventListener('click', function() { historyPanel.classList.toggle('hidden'); if (!historyPanel
+                    .classList.contains('hidden')) renderHistory() });
+            clearHistoryBtn.addEventListener('click', function() { history = [];
+                historyIndex = -1;
+                renderHistory();
+                showStatus('历史已清空', 'info') });
+            batchToggle.addEventListener('click', function() { batchContent.classList.toggle('hidden') });
+            batchApplyBtn.addEventListener('click', function() { const targets = [];
+                selectedSet.forEach(idx => { if (idx < items.length) targets.push(items[idx]) }); if (!targets.length) { showStatus(
+                        '请先勾选武器', 'warning'); return } batchApply(targets) });
+            batchApplyAllBtn.addEventListener('click', function() { if (!items.length) { showStatus('没有武器', 'warning');
+                    return } batchApply(items) });
+            batchAddModBtn.addEventListener('click', function() { showStatus('已设置添加Modifier，请点击"应用到勾选/全部"生效',
+                'info') });
+            batchRemoveModBtn.addEventListener('click', function() { showStatus('已设置移除Modifier，请点击"应用到勾选/全部"生效',
+                'info') });
+            selectAllCheck.addEventListener('change', function() { const visible = filtered.map(f => f._idx); if (this
+                    .checked) visible.forEach(i => selectedSet.add(i));
+                else visible.forEach(i => selectedSet.delete(i));
+                renderList();
+                updateSelectAllState() });
+
+            window.addEventListener('dragover', e => e.preventDefault());
+            window.addEventListener('drop', e => e.preventDefault());
+
+            populateDropdowns();
+            renderModifiers();
+            renderHistory();
+        })();
+    </script>
+</body>
+</html>

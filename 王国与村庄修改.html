@@ -1,0 +1,2042 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>世界盒子 · 王国与村庄</title>
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <link href="https://cdn.staticfile.net/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #4b5563 #1e1e1e
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+            border-radius: 4px
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px
+        }
+        body {
+            background: #121212;
+            color: #e5e5e5;
+            font-family: system-ui, -apple-system, 'Inter', 'Segoe UI', sans-serif;
+            padding-bottom: env(safe-area-inset-bottom)
+        }
+        .card {
+            background: #1e1e1e;
+            border-radius: 1rem;
+            border: 1px solid #2d2d2d;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: transform .2s, box-shadow .2s;
+            margin-bottom: 1.5rem;
+            overflow: hidden
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+            border-color: #3b82f6
+        }
+        .custom-input {
+            width: 100%;
+            padding: .75rem 1rem .75rem 2.5rem;
+            background-color: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .75rem;
+            outline: none;
+            transition: all .2s;
+            font-size: 1rem;
+            color: #f0f0f0
+        }
+        .custom-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background-color: #1a1a1a
+        }
+        .custom-input-sm {
+            padding: .5rem .75rem;
+            font-size: .875rem
+        }
+        .file-upload-wrapper {
+            position: relative;
+            width: 100%;
+            height: 130px;
+            border: 2px dashed #374151;
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .2s;
+            background-color: #0f0f1a
+        }
+        .file-upload-wrapper:hover {
+            border-color: #3b82f6;
+            background-color: #1e293b;
+            transform: scale(.99)
+        }
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer
+        }
+        .btn-primary {
+            background: linear-gradient(105deg, #2563eb, #1d4ed8);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transition: all .2s
+        }
+        .btn-primary:hover {
+            background: linear-gradient(105deg, #3b82f6, #2563eb);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4)
+        }
+        .btn-success {
+            background: linear-gradient(105deg, #059669, #047857);
+            transition: all .2s
+        }
+        .btn-success:hover {
+            background: linear-gradient(105deg, #10b981, #059669);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3)
+        }
+        .btn-secondary {
+            background: linear-gradient(105deg, #4b5563, #374151);
+            transition: all .2s
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(105deg, #6b7280, #4b5563);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3)
+        }
+        .btn-danger {
+            background: linear-gradient(105deg, #dc2626, #b91c1c);
+            transition: all .2s
+        }
+        .btn-danger:hover {
+            background: linear-gradient(105deg, #ef4444, #dc2626);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3)
+        }
+        button:active {
+            transform: scale(.97)
+        }
+        .badge-version {
+            background: rgba(59, 130, 246, 0.2);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(59, 130, 246, 0.4)
+        }
+        .status-message {
+            background: #1e1e2f;
+            border-left: 4px solid;
+            border-radius: .75rem;
+            padding: .75rem 1rem;
+            font-size: .85rem;
+            display: none;
+            margin-bottom: 1rem
+        }
+        .status-message.success {
+            border-left-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            color: #a7f3d0
+        }
+        .status-message.error {
+            border-left-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            color: #fecaca
+        }
+        .status-message.warning {
+            border-left-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+            color: #fed7aa
+        }
+        .status-message.info {
+            border-left-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+            color: #93c5fd
+        }
+        .fade-in {
+            animation: fadeInUp .3s cubic-bezier(0.2, 0.9, 0.4, 1.1)
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+        .kingdom-card,
+        .village-card {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: .75rem;
+            padding: .6rem .75rem;
+            cursor: pointer;
+            transition: all .2s
+        }
+        .kingdom-card:hover,
+        .village-card:hover {
+            border-color: #3b82f6;
+            background: #1a1a2a
+        }
+        .kingdom-card.active,
+        .village-card.active {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.12);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.08)
+        }
+        .kingdom-card .card-content .name {
+            font-weight: 600;
+            color: #93c5fd
+        }
+        .kingdom-card .card-content .sub,
+        .village-card .card-content .sub {
+            font-size: .8rem;
+            color: #9ca3af;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: .1rem
+        }
+        .kingdom-card .card-content .sub span,
+        .village-card .card-content .sub span {
+            display: flex;
+            align-items: center;
+            gap: .3rem
+        }
+        .capital-badge {
+            background: #f59e0b;
+            color: #000;
+            font-size: .6rem;
+            font-weight: 700;
+            padding: 0.1rem 0.5rem;
+            border-radius: 1rem;
+            margin-left: 0.4rem;
+            display: inline-block;
+        }
+        .list-container {
+            max-height: calc(50vh - 100px);
+            min-height: 120px;
+            overflow-y: auto
+        }
+        .ruler-card {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: .75rem;
+            padding: .6rem .75rem;
+            transition: all .2s;
+            margin-bottom: .5rem
+        }
+        .ruler-card:hover {
+            border-color: #3b82f6;
+            background: #1a1a2a
+        }
+        .ruler-card .field {
+            display: flex;
+            flex-direction: column
+        }
+        .ruler-card .field label {
+            font-size: .65rem;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: .03em
+        }
+        .ruler-card .field input,
+        .ruler-card .field select {
+            background: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .4rem;
+            padding: .2rem .4rem;
+            color: #f0f0f0;
+            font-size: .8rem;
+            outline: none;
+            width: 100%;
+            transition: .2s
+        }
+        .ruler-card .field input:focus,
+        .ruler-card .field select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15)
+        }
+        .ruler-card .btn-sm {
+            padding: .1rem .5rem;
+            font-size: .7rem;
+            border-radius: .3rem;
+            background: #2d2d2d;
+            color: #ccc;
+            border: none;
+            cursor: pointer;
+            transition: .2s
+        }
+        .ruler-card .btn-sm.danger {
+            background: #7f1d1d
+        }
+        .ruler-card .btn-sm.danger:hover {
+            background: #b91c1c
+        }
+        .ruler-list-container {
+            max-height: 200px;
+            overflow-y: auto
+        }
+        .add-bar {
+            display: flex;
+            gap: .3rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: .5rem;
+            padding: .3rem .5rem;
+            background: #0f0f1a;
+            border-radius: .5rem;
+            border: 1px solid #2d2d2d
+        }
+        .add-bar input,
+        .add-bar select {
+            background: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .3rem;
+            padding: .15rem .3rem;
+            color: #f0f0f0;
+            font-size: .75rem;
+            outline: none;
+            width: 80px
+        }
+        .add-bar input:focus,
+        .add-bar select:focus {
+            border-color: #3b82f6
+        }
+        .add-bar button {
+            background: #1e293b;
+            border: none;
+            color: #93c5fd;
+            border-radius: .3rem;
+            padding: .15rem .6rem;
+            font-size: .7rem;
+            cursor: pointer;
+            transition: .2s
+        }
+        .add-bar button:hover {
+            background: #2d3d5a
+        }
+        .section-divider {
+            margin: 0.5rem 0;
+            border-top: 1px solid #2d2d2d
+        }
+        .edit-section {
+            margin-bottom: 1rem
+        }
+        .checkbox-inline {
+            display: flex;
+            align-items: center;
+            gap: .4rem;
+            font-size: .75rem;
+            color: #9ca3af;
+            cursor: pointer
+        }
+        .checkbox-inline input[type="checkbox"] {
+            accent-color: #3b82f6;
+            width: 1rem;
+            height: 1rem;
+            cursor: pointer
+        }
+        .form-input {
+            width: 100%;
+            padding: .6rem .9rem;
+            background-color: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .75rem;
+            outline: none;
+            transition: all .2s;
+            font-size: .9rem;
+            color: #f0f0f0
+        }
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background-color: #1a1a1a
+        }
+        .form-select {
+            width: 100%;
+            padding: .6rem .9rem;
+            background-color: #0f0f0f;
+            border: 1px solid #333;
+            border-radius: .75rem;
+            outline: none;
+            transition: all .2s;
+            font-size: .9rem;
+            color: #f0f0f0;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right .75rem center;
+            background-repeat: no-repeat;
+            background-size: 1.2rem
+        }
+        .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background-color: #1a1a1a
+        }
+        .form-label {
+            display: block;
+            font-size: .8rem;
+            font-weight: 500;
+            color: #9ca3af;
+            margin-bottom: .3rem
+        }
+        .empty-state {
+            color: #6b7280;
+            text-align: center;
+            padding: 2.5rem 1rem
+        }
+        .empty-state i {
+            font-size: 2.5rem;
+            opacity: .3;
+            display: block;
+            margin-bottom: .75rem
+        }
+        .hidden {
+            display: none !important
+        }
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+            transition: opacity .3s;
+        }
+        .progress-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .progress-box {
+            background: #1e1e2e;
+            border-radius: 1.5rem;
+            padding: 2rem 2.5rem;
+            max-width: 90vw;
+            width: 400px;
+            text-align: center;
+            border: 1px solid #3b82f6;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+        .progress-box .title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #93c5fd;
+            margin-bottom: .5rem;
+        }
+        .progress-box .sub {
+            font-size: .85rem;
+            color: #9ca3af;
+            margin-bottom: 1.2rem;
+        }
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: #2d2d3d;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: .6rem;
+        }
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            border-radius: 4px;
+            transition: width .15s ease;
+        }
+        .progress-text {
+            font-size: .8rem;
+            color: #6b7280;
+        }
+        .progress-text strong {
+            color: #e5e5e5;
+        }
+        .tab-nav {
+            display: flex;
+            gap: 0;
+            background: #1a1a1a;
+            border-radius: .75rem;
+            border: 1px solid #2d2d2d;
+            overflow: hidden;
+            margin-bottom: 1.5rem
+        }
+        .tab-nav a.nav-link {
+            flex: 1;
+            padding: .7rem 1rem;
+            background: transparent;
+            color: #9ca3af;
+            font-size: .9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            border-bottom: 2px solid transparent;
+            text-decoration: none;
+            border-radius: 0
+        }
+        .tab-nav a.nav-link:hover {
+            color: #e5e5e5;
+            background: #1e1e2e;
+            text-decoration: none
+        }
+        .tab-nav a.nav-link.active {
+            color: #60a5fa;
+            border-bottom-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.08)
+        }
+        .tab-nav a.nav-link i {
+            font-size: .9rem
+        }
+        .tab-nav a.nav-link:first-child {
+            border-radius: .75rem 0 0 .75rem
+        }
+        .tab-nav a.nav-link:last-child {
+            border-radius: 0 .75rem .75rem 0
+        }
+        .tab-nav a.nav-link:first-child.active {
+            border-radius: .75rem 0 0 .75rem
+        }
+        .tab-nav a.nav-link:last-child.active {
+            border-radius: 0 .75rem .75rem 0
+        }
+        .tab-nav a.nav-link:only-child.active {
+            border-radius: .75rem
+        }
+        .res-select {
+            width: 120px
+        }
+        .res-amount {
+            width: 60px
+        }
+        .equip-section .ruler-card .field {
+            flex: 1;
+            min-width: 0
+        }
+        .equip-label {
+            font-size: .75rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-top: .5rem;
+            margin-bottom: .2rem
+        }
+        .equip-add-input {
+            width: 80px
+        }
+        .input-row {
+            display: flex;
+            gap: .3rem;
+            align-items: center;
+        }
+        .input-row input {
+            flex: 1;
+            min-width: 0;
+        }
+        .input-row .btn-sm {
+            padding: .1rem .5rem;
+            font-size: .7rem;
+            border-radius: .3rem;
+            background: #2d2d2d;
+            color: #ccc;
+            border: none;
+            cursor: pointer;
+            transition: .2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .input-row .btn-sm:hover {
+            background: #4b5563;
+        }
+        .actor-preview {
+            margin-top: .2rem;
+            font-size: .7rem;
+            color: #9ca3af;
+            background: #0f0f1a;
+            border-radius: .3rem;
+            padding: .2rem .4rem;
+            border: 1px solid #2d2d2d;
+            display: none;
+        }
+        .actor-preview.visible {
+            display: block;
+        }
+        .actor-preview .label {
+            color: #6b7280;
+        }
+        .actor-preview .val {
+            color: #e5e5e5;
+        }
+        .equip-preview {
+            margin-top: .2rem;
+            font-size: .7rem;
+            color: #9ca3af;
+            background: #0f0f1a;
+            border-radius: .3rem;
+            padding: .2rem .4rem;
+            border: 1px solid #2d2d2d;
+            display: none;
+        }
+        .equip-preview.visible {
+            display: block;
+        }
+        .equip-preview .label {
+            color: #6b7280;
+        }
+        .equip-preview .val {
+            color: #e5e5e5;
+        }
+        @media(max-width:768px) {
+            .list-container {
+                max-height: 30vh;
+                min-height: 100px
+            }
+            .ruler-list-container {
+                max-height: 150px
+            }
+            .card .p-4 {
+                padding: .75rem
+            }
+            .form-label {
+                font-size: .7rem
+            }
+            .tab-nav a.nav-link {
+                font-size: .75rem;
+                padding: .5rem .5rem
+            }
+            .tab-nav a.nav-link i {
+                font-size: .75rem
+            }
+            .kingdom-card .card-content .sub,
+            .village-card .card-content .sub {
+                font-size: .7rem;
+                gap: .5rem
+            }
+            .add-bar input,
+            .add-bar select {
+                width: 60px;
+                font-size: .65rem
+            }
+            .add-bar .res-select {
+                width: 90px
+            }
+            .add-bar .res-amount {
+                width: 50px
+            }
+            .progress-box {
+                padding: 1.5rem;
+                width: 90vw;
+            }
+        }
+        @media(max-width:480px) {
+            .tab-nav a.nav-link {
+                font-size: .65rem;
+                padding: .4rem .3rem;
+                gap: .2rem
+            }
+            .tab-nav a.nav-link i {
+                font-size: .65rem
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-gradient-to-r from-slate-900 via-gray-900 to-indigo-900 border-b border-indigo-500/30 sticky top-0 z-50 shadow-2xl backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-dungeon text-indigo-400 text-xl"></i>
+                <div>
+                    <h1 class="text-lg font-bold bg-gradient-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">世界盒子 · 王国与村庄</h1>
+                    <p class="text-[10px] text-gray-400 hidden xs:block">修改王国 · 村庄 · 历史</p>
+                </div>
+            </div>
+            <div class="badge-version text-xs px-2 py-0.5 rounded-full text-indigo-300 font-mono flex items-center gap-1">
+                <span id="file-badge">未加载</span>
+                <i class="fa-regular fa-circle-check text-emerald-400 hidden" id="loaded-icon"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-2">
+        <div id="statusArea" class="status-message fade-in"></div>
+
+        <div class="tab-nav" id="mainTabs">
+            <a href="武器修改.html" class="nav-link" data-tab="weapon"><i class="fa-solid fa-sword"></i> 武器修改</a>
+            <a href="王国与村庄修改.html" class="nav-link active" data-tab="kingdom"><i class="fa-solid fa-crown"></i> 王国与村庄修改</a>
+            <a href="生物修改.html" class="nav-link" data-tab="actor"><i class="fa-solid fa-user"></i> 生物修改</a>
+        </div>
+
+        <div id="uploadSection" class="card p-4">
+            <div class="flex items-center gap-2 border-b border-gray-800 pb-2 mb-3">
+                <i class="fa-solid fa-cloud-upload-alt text-indigo-400"></i>
+                <h2 class="text-base font-semibold text-indigo-300">上传存档</h2>
+            </div>
+            <div class="file-upload-wrapper" id="dropZone">
+                <input type="file" id="fileInput" accept=".json">
+                <i class="fa-solid fa-file-json text-3xl text-indigo-400/60 mb-1"></i>
+                <p class="text-sm text-gray-400 font-medium" id="fileNameDisplay">点击或拖拽 .json 存档文件至此</p>
+                <p class="text-xs text-gray-500 mt-0.5">世界盒子存档 · 本地处理</p>
+            </div>
+        </div>
+
+        <div id="editorContainer" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3">
+                <div class="lg:col-span-5 card p-3">
+                    <div class="flex items-center gap-2 border-b border-gray-800 pb-2 mb-2">
+                        <i class="fa-solid fa-crown text-indigo-400"></i>
+                        <h2 class="text-base font-semibold text-indigo-300">王国列表</h2>
+                        <span class="ml-auto text-xs text-gray-500" id="kingdomCount">0 个</span>
+                    </div>
+                    <div class="flex gap-2 mb-2 flex-wrap">
+                        <div class="relative flex-1 min-w-[100px]">
+                            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
+                            <input type="text" id="kingdomSearch" placeholder="搜索王国..." class="custom-input custom-input-sm pl-8 w-full">
+                        </div>
+                    </div>
+                    <div class="list-container" id="kingdomListContainer"></div>
+                    <hr class="section-divider">
+                    <div class="flex items-center gap-2 border-b border-gray-800 pb-2 mb-2 mt-2">
+                        <i class="fa-solid fa-house-chimney text-indigo-400"></i>
+                        <h2 class="text-base font-semibold text-indigo-300">村庄列表</h2>
+                        <span class="ml-auto text-xs text-gray-500" id="villageCount">0 个</span>
+                    </div>
+                    <div class="flex gap-2 mb-2 flex-wrap">
+                        <div class="relative flex-1 min-w-[100px]">
+                            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm"></i>
+                            <input type="text" id="villageSearch" placeholder="搜索村庄..." class="custom-input custom-input-sm pl-8 w-full">
+                        </div>
+                        <label class="checkbox-inline ml-1">
+                            <input type="checkbox" id="showAllVillages"> 显示全部
+                        </label>
+                    </div>
+                    <div class="list-container" id="villageListContainer"></div>
+                </div>
+                <div class="lg:col-span-7 card p-3">
+                    <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-3 flex-wrap gap-1">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-pen-to-square text-indigo-400"></i>
+                            <h2 class="text-base font-semibold text-indigo-300">编辑</h2>
+                        </div>
+                        <div>
+                            <button id="downloadBtn" class="btn-success text-white px-3 py-1 rounded-lg text-xs flex items-center gap-1"><i class="fa-solid fa-download"></i>下载</button>
+                        </div>
+                    </div>
+                    <div id="villageEditSection" class="edit-section hidden">
+                        <div class="flex items-center gap-2 border-b border-gray-800 pb-1 mb-2">
+                            <i class="fa-solid fa-house-chimney text-emerald-400"></i>
+                            <h3 class="text-sm font-semibold text-emerald-300">村庄编辑</h3>
+                        </div>
+                        <div id="villageFormEmpty" class="empty-state py-4">
+                            <i class="fa-regular fa-hand-pointer"></i>
+                            <p class="text-sm">请在左侧选择一个村庄</p>
+                        </div>
+                        <form id="villageEditForm" class="hidden space-y-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div><label class="form-label">ID</label><input type="number" id="v_id" class="form-input" readonly></div>
+                                <div><label class="form-label">名称</label><input type="text" id="v_name" class="form-input"></div>
+                                <div><label class="form-label">种族</label><input type="text" id="v_race" class="form-input"></div>
+                                <div>
+                                    <label class="form-label">所属王国ID</label>
+                                    <div class="input-row">
+                                        <input type="number" id="v_kingdomID" class="form-input">
+                                        <button type="button" class="btn-sm lookup-btn" data-target="v_kingdomID" data-type="kingdom">查询</button>
+                                    </div>
+                                    <div class="actor-preview" id="preview_v_kingdomID"></div>
+                                </div>
+                                <div>
+                                    <label class="form-label">村长ID</label>
+                                    <div class="input-row">
+                                        <input type="number" id="v_leaderID" class="form-input">
+                                        <button type="button" class="btn-sm lookup-btn" data-target="v_leaderID" data-type="actor">查询</button>
+                                    </div>
+                                    <div class="actor-preview" id="preview_v_leaderID"></div>
+                                </div>
+                                <div>
+                                    <label class="form-label">初始村长ID</label>
+                                    <div class="input-row">
+                                        <input type="number" id="v_founder_id" class="form-input">
+                                        <button type="button" class="btn-sm lookup-btn" data-target="v_founder_id" data-type="actor">查询</button>
+                                    </div>
+                                    <div class="actor-preview" id="preview_v_founder_id"></div>
+                                </div>
+                                <div><label class="form-label">初始村长名</label><input type="text" id="v_founder_name" class="form-input"></div>
+                                <div>
+                                    <label class="form-label">最后村长ID</label>
+                                    <div class="input-row">
+                                        <input type="number" id="v_last_leader_id" class="form-input">
+                                        <button type="button" class="btn-sm lookup-btn" data-target="v_last_leader_id" data-type="actor">查询</button>
+                                    </div>
+                                    <div class="actor-preview" id="preview_v_last_leader_id"></div>
+                                </div>
+                                <div><label class="form-label">最后所属王国ID</label><input type="number" id="v_last_kingdom_id" class="form-input"></div>
+                                <div><label class="form-label">文化ID</label><input type="number" id="v_culture" class="form-input"></div>
+                                <div><label class="form-label">语言ID</label><input type="number" id="v_language" class="form-input"></div>
+                                <div><label class="form-label">宗教ID</label><input type="number" id="v_religion" class="form-input"></div>
+                                <div><label class="form-label">移动人数</label><input type="number" id="v_moved" class="form-input"></div>
+                                <div><label class="form-label">迁移人数</label><input type="number" id="v_migrated" class="form-input"></div>
+                                <div><label class="form-label">总死亡</label><input type="number" id="v_deaths" class="form-input"></div>
+                                <div><label class="form-label">总出生</label><input type="number" id="v_births" class="form-input"></div>
+                                <div><label class="form-label">总击杀</label><input type="number" id="v_kills" class="form-input"></div>
+                                <div><label class="form-label">自然死亡</label><input type="number" id="v_deathnat" class="form-input"></div>
+                                <div><label class="form-label">火烧</label><input type="number" id="v_deathfire" class="form-input"></div>
+                                <div><label class="form-label">武器死亡</label><input type="number" id="v_deathweapon" class="form-input"></div>
+                                <div><label class="form-label">溺水</label><input type="number" id="v_deathdrown" class="form-input"></div>
+                                <div><label class="form-label">其他死亡</label><input type="number" id="v_deathother" class="form-input"></div>
+                                <div><label class="form-label">声望</label><input type="number" id="v_renown" class="form-input"></div>
+                                <div><label class="form-label">自定义名称</label>
+                                    <select id="v_custom_name" class="form-select"><option value="true">是</option><option value="false">否</option></select>
+                                </div>
+                                <div><label class="form-label">名称文化ID</label><input type="number" id="v_name_culture_id" class="form-input"></div>
+                                <div><label class="form-label">创建时间</label><input type="number" id="v_created_time" class="form-input"></div>
+                                <div><label class="form-label">食物消耗总量</label><input type="number" id="v_food" class="form-input"></div>
+                                <div><label class="form-label">定时供应</label><input type="number" id="v_timer" class="form-input"></div>
+                            </div>
+                            <hr class="border-gray-700">
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <label class="form-label"><i class="fa-solid fa-history mr-1"></i>历代村长</label>
+                                    <button type="button" id="addVillageRulerBtn" class="btn-secondary text-white px-2 py-0.5 text-xs rounded"><i class="fa-solid fa-plus"></i> 添加</button>
+                                </div>
+                                <div id="villageRulerList" class="ruler-list-container space-y-1 mt-1"></div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <label class="form-label"><i class="fa-solid fa-tag mr-1"></i>历史名称</label>
+                                    <button type="button" id="addVillagePastNameBtn" class="btn-secondary text-white px-2 py-0.5 text-xs rounded"><i class="fa-solid fa-plus"></i> 添加</button>
+                                </div>
+                                <div id="villagePastNameList" class="ruler-list-container space-y-1 mt-1"></div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <label class="form-label"><i class="fa-solid fa-boxes mr-1"></i>装备库存</label>
+                                </div>
+                                <div class="equip-section">
+                                    <div class="equip-label text-xs font-semibold text-gray-400 mt-2 mb-1">武器</div>
+                                    <div id="equip_weapons" class="ruler-list-container space-y-1 mt-1"></div>
+                                    <div class="add-bar">
+                                        <input type="number" class="equip-add-input" data-type="weapons" placeholder="ID">
+                                        <button class="equip-add-btn" data-type="weapons"><i class="fa-solid fa-plus"></i> 添加</button>
+                                        <button class="btn-secondary equip-lookup-btn" data-type="weapons">查询</button>
+                                    </div>
+                                    <div class="equip-preview" id="preview_weapons"></div>
+                                    <div class="equip-label text-xs font-semibold text-gray-400 mt-2 mb-1">头盔</div>
+                                    <div id="equip_helmets" class="ruler-list-container space-y-1 mt-1"></div>
+                                    <div class="add-bar">
+                                        <input type="number" class="equip-add-input" data-type="helmets" placeholder="ID">
+                                        <button class="equip-add-btn" data-type="helmets"><i class="fa-solid fa-plus"></i> 添加</button>
+                                        <button class="btn-secondary equip-lookup-btn" data-type="helmets">查询</button>
+                                    </div>
+                                    <div class="equip-preview" id="preview_helmets"></div>
+                                    <div class="equip-label text-xs font-semibold text-gray-400 mt-2 mb-1">胸甲</div>
+                                    <div id="equip_armor" class="ruler-list-container space-y-1 mt-1"></div>
+                                    <div class="add-bar">
+                                        <input type="number" class="equip-add-input" data-type="armor" placeholder="ID">
+                                        <button class="equip-add-btn" data-type="armor"><i class="fa-solid fa-plus"></i> 添加</button>
+                                        <button class="btn-secondary equip-lookup-btn" data-type="armor">查询</button>
+                                    </div>
+                                    <div class="equip-preview" id="preview_armor"></div>
+                                    <div class="equip-label text-xs font-semibold text-gray-400 mt-2 mb-1">靴子</div>
+                                    <div id="equip_boots" class="ruler-list-container space-y-1 mt-1"></div>
+                                    <div class="add-bar">
+                                        <input type="number" class="equip-add-input" data-type="boots" placeholder="ID">
+                                        <button class="equip-add-btn" data-type="boots"><i class="fa-solid fa-plus"></i> 添加</button>
+                                        <button class="btn-secondary equip-lookup-btn" data-type="boots">查询</button>
+                                    </div>
+                                    <div class="equip-preview" id="preview_boots"></div>
+                                    <div class="equip-label text-xs font-semibold text-gray-400 mt-2 mb-1">戒指</div>
+                                    <div id="equip_rings" class="ruler-list-container space-y-1 mt-1"></div>
+                                    <div class="add-bar">
+                                        <input type="number" class="equip-add-input" data-type="rings" placeholder="ID">
+                                        <button class="equip-add-btn" data-type="rings"><i class="fa-solid fa-plus"></i> 添加</button>
+                                        <button class="btn-secondary equip-lookup-btn" data-type="rings">查询</button>
+                                    </div>
+                                    <div class="equip-preview" id="preview_rings"></div>
+                                    <div class="equip-label text-xs font-semibold text-gray-400 mt-2 mb-1">护符</div>
+                                    <div id="equip_amulets" class="ruler-list-container space-y-1 mt-1"></div>
+                                    <div class="add-bar">
+                                        <input type="number" class="equip-add-input" data-type="amulets" placeholder="ID">
+                                        <button class="equip-add-btn" data-type="amulets"><i class="fa-solid fa-plus"></i> 添加</button>
+                                        <button class="btn-secondary equip-lookup-btn" data-type="amulets">查询</button>
+                                    </div>
+                                    <div class="equip-preview" id="preview_amulets"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <label class="form-label"><i class="fa-solid fa-map-pin mr-1"></i>区域 (x,y)</label>
+                                    <button type="button" id="addZoneBtn" class="btn-secondary text-white px-2 py-0.5 text-xs rounded"><i class="fa-solid fa-plus"></i> 添加</button>
+                                </div>
+                                <div id="zoneList" class="ruler-list-container space-y-1 mt-1"></div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <label class="form-label"><i class="fa-solid fa-cubes mr-1"></i>物资存库</label>
+                                    <button type="button" id="addResourceBtn" class="btn-secondary text-white px-2 py-0.5 text-xs rounded"><i class="fa-solid fa-plus"></i> 添加</button>
+                                </div>
+                                <div id="resourceList" class="ruler-list-container space-y-1 mt-1"></div>
+                                <div class="add-bar">
+                                    <select id="resTypeSelect" class="res-select">
+                                        <option value="gold">黄金</option><option value="wood">木材</option><option value="stone">石头</option><option value="silver">银</option><option value="mythril">秘银</option><option value="adamantine">精金</option><option value="common_metals">普通金属</option><option value="bones">骨头</option><option value="leather">皮革</option><option value="gems">宝石</option><option value="berries">浆果</option><option value="bananas">香蕉</option><option value="coconut">椰子</option><option value="crystal_salt">盐</option><option value="desert_berries">沙漠浆果</option><option value="evil_beets">邪恶甜菜</option><option value="mushrooms">蘑菇</option><option value="peppers">胡椒</option><option value="meat">肉</option><option value="sushi">寿司</option><option value="jam">果酱</option><option value="cider">果酒</option><option value="ale">啤酒</option><option value="burger">汉堡</option><option value="pie">馅饼</option><option value="tea">茶点</option><option value="wheat">小麦</option><option value="herbs">草药</option><option value="bread">面包</option><option value="fish">鱼</option><option value="candy">糖果</option><option value="worms">蠕虫</option><option value="snow_cucumbers">雪花南瓜</option><option value="pine_cones">松果</option><option value="lemons">柠檬</option>
+                                    </select>
+                                    <input type="number" id="resAmountInput" class="res-amount" value="1" min="0">
+                                    <button id="addResourceConfirmBtn"><i class="fa-solid fa-plus"></i> 添加</button>
+                                </div>
+                            </div>
+                            <div class="pt-1 flex gap-2">
+                                <button type="button" id="saveVillageBtn" class="flex-1 btn-primary text-white font-medium rounded-lg px-4 py-2 text-sm"><i class="fa-solid fa-check mr-1"></i>保存村庄</button>
+                                <button type="button" id="resetVillageBtn" class="btn-secondary text-white px-3 py-2 rounded-lg text-sm"><i class="fa-solid fa-undo"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="kingdomEditSection" class="edit-section">
+                        <div class="flex items-center gap-2 border-b border-gray-800 pb-1 mb-2">
+                            <i class="fa-solid fa-crown text-yellow-400"></i>
+                            <h3 class="text-sm font-semibold text-yellow-300">王国编辑</h3>
+                        </div>
+                        <div id="kingdomFormEmpty" class="empty-state py-4">
+                            <i class="fa-regular fa-hand-pointer"></i>
+                            <p class="text-sm">请在左侧选择一个王国</p>
+                        </div>
+                        <form id="kingdomEditForm" class="hidden space-y-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div><label class="form-label">ID</label><input type="number" id="k_id" class="form-input" readonly></div>
+                                <div><label class="form-label">名称</label><input type="text" id="k_name" class="form-input"></div>
+                                <div><label class="form-label">种族</label><input type="text" id="k_race" class="form-input"></div>
+                                <div><label class="form-label">座右铭</label><input type="text" id="k_motto" class="form-input"></div>
+                                <div><label class="form-label">创建时间</label><input type="number" id="k_created" class="form-input"></div>
+                                <div><label class="form-label">联盟时间(-1=无)</label><input type="number" id="k_alliance" class="form-input"></div>
+                                <div><label class="form-label">上次战争</label><input type="number" id="k_lastwar" class="form-input"></div>
+                                <div><label class="form-label">征服时间</label><input type="number" id="k_conquest" class="form-input"></div>
+                                <div><label class="form-label">统治时间</label><input type="number" id="k_rule" class="form-input"></div>
+                                <div><label class="form-label">新王倒计时</label><input type="number" id="k_timer" class="form-input"></div>
+                                <div><label class="form-label">国王总数</label><input type="number" id="k_totalkings" class="form-input"></div>
+                                <div><label class="form-label">旗帜样式(0-7)</label><input type="number" id="k_bannerbg" class="form-input"></div>
+                                <div><label class="form-label">旗帜图标(0-7)</label><input type="number" id="k_bannericon" class="form-input"></div>
+                                <div><label class="form-label">旗帜颜色(0-87)</label><input type="number" id="k_color" class="form-input"></div>
+                                <div><label class="form-label">文化ID</label><input type="number" id="k_culture" class="form-input"></div>
+                                <div><label class="form-label">语言ID</label><input type="number" id="k_language" class="form-input"></div>
+                                <div><label class="form-label">宗教ID</label><input type="number" id="k_religion" class="form-input"></div>
+                                <div><label class="form-label">移动人数</label><input type="number" id="k_moved" class="form-input"></div>
+                                <div><label class="form-label">迁移人数</label><input type="number" id="k_migrated" class="form-input"></div>
+                                <div><label class="form-label">总死亡</label><input type="number" id="k_deaths" class="form-input"></div>
+                                <div><label class="form-label">总出生</label><input type="number" id="k_births" class="form-input"></div>
+                                <div><label class="form-label">总击杀</label><input type="number" id="k_kills" class="form-input"></div>
+                                <div><label class="form-label">自然死亡</label><input type="number" id="k_deathnat" class="form-input"></div>
+                                <div><label class="form-label">火烧</label><input type="number" id="k_deathfire" class="form-input"></div>
+                                <div><label class="form-label">武器死亡</label><input type="number" id="k_deathweapon" class="form-input"></div>
+                                <div><label class="form-label">溺水</label><input type="number" id="k_deathdrown" class="form-input"></div>
+                                <div><label class="form-label">爆炸</label><input type="number" id="k_deathexpl" class="form-input"></div>
+                                <div><label class="form-label">声望</label><input type="number" id="k_renown" class="form-input"></div>
+                                <div><label class="form-label">首都ID</label><input type="number" id="k_capital" class="form-input"></div>
+                                <div><label class="form-label">上次首都ID</label><input type="number" id="k_lastcapital" class="form-input"></div>
+                                <div><label class="form-label">当前国王ID</label><input type="number" id="k_kingid" class="form-input"></div>
+                                <div><label class="form-label">Left</label><input type="number" id="k_left" class="form-input"></div>
+                                <div><label class="form-label">原始颜色ID</label><input type="number" id="k_origcolor" class="form-input"></div>
+                            </div>
+                            <hr class="border-gray-700">
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <label class="form-label"><i class="fa-solid fa-history mr-1"></i>历代国王</label>
+                                    <button type="button" id="addRulerBtn" class="btn-secondary text-white px-2 py-0.5 text-xs rounded"><i class="fa-solid fa-plus"></i> 添加</button>
+                                </div>
+                                <div id="rulerList" class="ruler-list-container space-y-1 mt-1"></div>
+                            </div>
+                            <div class="pt-1 flex gap-2">
+                                <button type="button" id="saveKingdomBtn" class="flex-1 btn-primary text-white font-medium rounded-lg px-4 py-2 text-sm"><i class="fa-solid fa-check mr-1"></i>保存王国</button>
+                                <button type="button" id="resetKingdomBtn" class="btn-secondary text-white px-3 py-2 rounded-lg text-sm"><i class="fa-solid fa-undo"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="progressOverlay" class="progress-overlay hidden">
+        <div class="progress-box">
+            <div class="title"><i class="fa-solid fa-spinner fa-pulse mr-2"></i>加载存档</div>
+            <div class="sub" id="progressSub">正在读取文件...</div>
+            <div class="progress-track"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+            <div class="progress-text"><span id="progressPercent">0</span>%</div>
+        </div>
+    </div>
+
+    <footer class="text-center text-gray-500 text-xs py-4 border-t border-gray-800 mt-4"><i class="fa-regular fa-gem text-indigo-500"></i> 本地处理 · 隐私安全 · 王国村庄修改</footer>
+
+    <script>
+        (function() {
+            const RESOURCE_IDS = ['gold', 'wood', 'stone', 'silver', 'mythril', 'adamantine', 'common_metals', 'bones',
+                'leather', 'gems', 'berries', 'bananas', 'coconut', 'crystal_salt', 'desert_berries', 'evil_beets',
+                'mushrooms', 'peppers', 'meat', 'sushi', 'jam', 'cider', 'ale', 'burger', 'pie', 'tea', 'wheat', 'herbs',
+                'bread', 'fish', 'candy', 'worms', 'snow_cucumbers', 'pine_cones', 'lemons'
+            ];
+            const MAX_INT = 2147483647;
+            const TYPE_MAP = {
+                stick: '木棍',
+                sword: '剑',
+                spear: '矛',
+                hammer: '锤',
+                axe: '斧',
+                bow: '弓',
+                armor: '胸甲',
+                helmet: '头盔',
+                boots: '靴子',
+                ring: '戒指',
+                amulet: '护符',
+                druid_staff: '德鲁伊法杖',
+                necromancer_staff: '死灵法杖',
+                plague_doctor_staff: '疫医法杖',
+                white_staff: '白色法杖',
+                evil_staff: '邪恶法杖',
+                alien_blaster: '外星枪',
+                flame_sword: '火焰之剑',
+                shotgun: '霰弹枪'
+            };
+            const MAT_MAP = { wood: '木', stone: '石', leather: '皮革', bone: '骨头', copper: '铜', bronze: '青铜',
+                silver: '银', iron: '铁', steel: '钢', mythril: '秘银', adamantine: '精金' };
+
+            let saveData = null,
+                kingdoms = [],
+                villages = [],
+                villageKey = 'cities';
+            let actorsData = [],
+                itemsData = [];
+            let kingdomSearchText = '',
+                kingdomFiltered = [],
+                selectedKingdomIdx = -1,
+                currentRulers = [];
+            let villageSearchText = '',
+                villageFiltered = [],
+                selectedVillageIdx = -1,
+                showAllVillages = false;
+            let currentVillageRulers = [],
+                currentVillagePastNames = [];
+            let currentEquipment = { item_storage_weapons: [], item_storage_helmets: [], item_storage_armor: [],
+                item_storage_boots: [], item_storage_rings: [], item_storage_amulets: [] };
+            let currentZones = [],
+                currentResources = [];
+            let history = [],
+                historyIndex = -1;
+
+            const $ = id => document.getElementById(id);
+            const el = (s, ctx) => (ctx || document).querySelector(s);
+            const all = (s, ctx) => (ctx || document).querySelectorAll(s);
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return String(str).replace(/[&<>"']/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    if (m === '"') return '&quot;';
+                    if (m === "'") return '&#039;';
+                    return m;
+                });
+            }
+
+            const fileInput = $('fileInput'),
+                dropZone = $('dropZone'),
+                fileNameDisplay = $('fileNameDisplay'),
+                fileBadge = $('file-badge'),
+                loadedIcon = $('loaded-icon');
+            const uploadSection = $('uploadSection'),
+                editorContainer = $('editorContainer');
+            const statusArea = $('statusArea');
+            const kingdomListContainer = $('kingdomListContainer'),
+                kingdomCount = $('kingdomCount');
+            const kingdomSearch = $('kingdomSearch');
+            const villageListContainer = $('villageListContainer'),
+                villageCount = $('villageCount');
+            const villageSearch = $('villageSearch'),
+                showAllVillagesCheck = $('showAllVillages');
+            const kingdomFormEmpty = $('kingdomFormEmpty'),
+                kingdomEditForm = $('kingdomEditForm');
+            const saveKingdomBtn = $('saveKingdomBtn'),
+                resetKingdomBtn = $('resetKingdomBtn'),
+                addRulerBtn = $('addRulerBtn'),
+                rulerList = $('rulerList');
+            const villageEditSection = $('villageEditSection'),
+                villageFormEmpty = $('villageFormEmpty'),
+                villageEditForm = $('villageEditForm');
+            const saveVillageBtn = $('saveVillageBtn'),
+                resetVillageBtn = $('resetVillageBtn');
+            const addVillageRulerBtn = $('addVillageRulerBtn'),
+                villageRulerList = $('villageRulerList');
+            const addVillagePastNameBtn = $('addVillagePastNameBtn'),
+                villagePastNameList = $('villagePastNameList');
+            const equipWeapons = $('equip_weapons'),
+                equipHelmets = $('equip_helmets'),
+                equipArmor = $('equip_armor'),
+                equipBoots = $('equip_boots'),
+                equipRings = $('equip_rings'),
+                equipAmulets = $('equip_amulets');
+            const zoneList = $('zoneList'),
+                addZoneBtn = $('addZoneBtn');
+            const resourceList = $('resourceList'),
+                addResourceBtn = $('addResourceBtn');
+            const resTypeSelect = $('resTypeSelect'),
+                resAmountInput = $('resAmountInput'),
+                addResourceConfirmBtn = $('addResourceConfirmBtn');
+            const downloadBtn = $('downloadBtn');
+            const progressOverlay = $('progressOverlay'),
+                progressBar = $('progressBar'),
+                progressPercent = $('progressPercent'),
+                progressSub = $('progressSub');
+
+            function showStatus(msg, type) {
+                statusArea.className = 'status-message fade-in';
+                if (type) statusArea.classList.add(type);
+                statusArea.innerHTML = `<i class="fa-regular fa-bell mr-2"></i> ${escapeHtml(msg)}`;
+                statusArea.style.display = 'block';
+                setTimeout(() => statusArea.style.display = 'none', 4000);
+            }
+
+            function pushHistory() {
+                const snap = { timestamp: Date.now(), kingdoms: JSON.parse(JSON.stringify(kingdoms)), villages: JSON.parse(
+                        JSON.stringify(villages)) };
+                if (historyIndex < history.length - 1) history = history.slice(0, historyIndex + 1);
+                history.push(snap);
+                if (history.length > 30) history.shift();
+                historyIndex = history.length - 1;
+            }
+
+            function renderKingdomList() {
+                if (!kingdoms.length) {
+                    kingdomListContainer.innerHTML =
+                        `<div class="empty-state"><i class="fa-regular fa-crown"></i>未找到王国数据</div>`;
+                    kingdomCount.textContent = '0 个';
+                    return;
+                }
+                const q = kingdomSearchText.toLowerCase();
+                kingdomFiltered = kingdoms.map((k, i) => ({ ...k, _idx: i })).filter(k => {
+                    if (!q) return true;
+                    const n = (k.name || '').toLowerCase(),
+                        m = (k.motto || '').toLowerCase();
+                    return n.includes(q) || m.includes(q);
+                });
+                kingdomCount.textContent = `${kingdomFiltered.length} 个`;
+                if (!kingdomFiltered.length) {
+                    kingdomListContainer.innerHTML =
+                        `<div class="empty-state"><i class="fa-regular fa-filter-circle-xmark"></i>无匹配结果</div>`;
+                    return;
+                }
+                let html = '';
+                kingdomFiltered.forEach(k => {
+                    const active = k._idx === selectedKingdomIdx ? 'active' : '';
+                    const rulers = k.past_rulers || [];
+                    const currentKing = rulers.length ? rulers[rulers.length - 1] : null;
+                    const kingName = currentKing ? currentKing.name : '无';
+                    const created = k.created_time !== undefined ? k.created_time : '?';
+                    const motto = k.motto || '无';
+                    html += `<div class="kingdom-card ${active}" data-idx="${k._idx}">
+                        <div class="card-content">
+                            <div class="name"><i class="fa-solid fa-crown text-yellow-500/70 mr-1"></i> ${escapeHtml(k.name || '未命名')} <span class="text-xs text-gray-400 font-normal">#${k.id || k._idx+1}</span></div>
+                            <div class="sub">
+                                <span><i class="fa-regular fa-user mr-1"></i>君主：${escapeHtml(kingName)}</span>
+                                <span><i class="fa-regular fa-calendar mr-1"></i>成立：${escapeHtml(String(created))}</span>
+                                <span><i class="fa-regular fa-quote-right mr-1"></i>${escapeHtml(motto)}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+                kingdomListContainer.innerHTML = html;
+                kingdomListContainer.querySelectorAll('.kingdom-card').forEach(card => {
+                    const idx = parseInt(card.dataset.idx);
+                    card.addEventListener('click', function() { selectKingdom(idx) });
+                });
+                if (selectedKingdomIdx === -1 && kingdomFiltered.length) selectKingdom(kingdomFiltered[0]._idx);
+                else if (selectedKingdomIdx !== -1 && !kingdomFiltered.some(k => k._idx === selectedKingdomIdx))
+                    selectKingdom(kingdomFiltered[0]._idx);
+            }
+
+            function selectKingdom(idx) {
+                if (idx < 0 || idx >= kingdoms.length) return;
+                selectedKingdomIdx = idx;
+                selectedVillageIdx = -1;
+                kingdomEditForm.classList.remove('hidden');
+                kingdomFormEmpty.classList.add('hidden');
+                villageEditSection.classList.add('hidden');
+                const k = kingdoms[idx];
+                const fields = {
+                    'k_id': 'id',
+                    'k_name': 'name',
+                    'k_race': 'original_actor_asset',
+                    'k_motto': 'motto',
+                    'k_created': 'created_time',
+                    'k_alliance': 'timestamp_alliance',
+                    'k_lastwar': 'timestamp_last_war',
+                    'k_conquest': 'timestamp_new_conquest',
+                    'k_rule': 'timestamp_king_rule',
+                    'k_timer': 'timer_new_king',
+                    'k_totalkings': 'total_kings',
+                    'k_bannerbg': 'banner_background_id',
+                    'k_bannericon': 'banner_icon_id',
+                    'k_color': 'color_id',
+                    'k_culture': 'id_culture',
+                    'k_language': 'id_language',
+                    'k_religion': 'id_religion',
+                    'k_moved': 'moved',
+                    'k_migrated': 'migrated',
+                    'k_deaths': 'total_deaths',
+                    'k_births': 'total_births',
+                    'k_kills': 'total_kills',
+                    'k_deathnat': 'deaths_natural',
+                    'k_deathfire': 'deaths_fire',
+                    'k_deathweapon': 'deaths_weapon',
+                    'k_deathdrown': 'deaths_drowning',
+                    'k_deathexpl': 'deaths_explosion',
+                    'k_renown': 'renown',
+                    'k_capital': 'capitalID',
+                    'k_lastcapital': 'last_capital_id',
+                    'k_kingid': 'kingID',
+                    'k_left': 'left',
+                    'k_origcolor': 'original_color_id'
+                };
+                Object.keys(fields).forEach(id => { const el = $(id); if (el) { const v = k[fields[id]] !== undefined ?
+                            k[fields[id]] : '';
+                        el.value = v } });
+                currentRulers = (k.past_rulers || []).map(r => ({ ...r }));
+                renderRulers();
+                renderKingdomList();
+                renderVillageList();
+                kingdomListContainer.querySelector('.kingdom-card.active')?.scrollIntoView({ block: 'nearest' });
+            }
+
+            function renderRulers() {
+                if (!currentRulers.length) {
+                    rulerList.innerHTML =
+                        `<div class="text-xs text-gray-500 py-1">无历代国王，点击 "添加" 增加</div>`;
+                    return;
+                }
+                let html = '';
+                currentRulers.forEach((r, idx) => {
+                    html += `<div class="ruler-card" data-ridx="${idx}">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div class="field"><label>ID</label><input type="number" class="ruler-id" value="${r.id||''}" placeholder="ID"></div>
+                            <div class="field"><label>颜色</label><input type="number" class="ruler-color" value="${r.color_id||0}" placeholder="颜色"></div>
+                            <div class="field"><label>名称</label><input type="text" class="ruler-name" value="${escapeHtml(r.name||'')}" placeholder="名称"></div>
+                            <div class="field"><label>开始时间</label><input type="number" class="ruler-ago" value="${r.timestamp_ago||0}" placeholder="开始"></div>
+                            <div class="field"><label>结束时间</label><input type="number" class="ruler-end" value="${r.timestamp_end||0}" placeholder="结束"></div>
+                            <div class="field flex justify-end items-end"><button type="button" class="btn-sm danger remove-ruler"><i class="fa-solid fa-trash-can"></i> 删除</button></div>
+                        </div>
+                    </div>`;
+                });
+                rulerList.innerHTML = html;
+                rulerList.querySelectorAll('.ruler-card').forEach((card, idx) => {
+                    const idInp = card.querySelector('.ruler-id'),
+                        colorInp = card.querySelector('.ruler-color'),
+                        nameInp = card.querySelector('.ruler-name'),
+                        agoInp = card.querySelector('.ruler-ago'),
+                        endInp = card.querySelector('.ruler-end');
+                    const updateRuler = () => {
+                        const r = currentRulers[idx];
+                        if (r) { r.id = parseInt(idInp.value) || 0;
+                            r.color_id = parseInt(colorInp.value) || 0;
+                            r.name = nameInp.value.trim() || '未知';
+                            r.timestamp_ago = parseFloat(agoInp.value) || 0;
+                            r.timestamp_end = parseFloat(endInp.value) || 0 }
+                    };
+                    [idInp, colorInp, nameInp, agoInp, endInp].forEach(inp => { inp.addEventListener('change',
+                            updateRuler);
+                        inp.addEventListener('input', updateRuler) });
+                    card.querySelector('.remove-ruler').addEventListener('click', function() {
+                        currentRulers.splice(idx, 1);
+                        renderRulers();
+                    });
+                });
+            }
+
+            function saveKingdom() {
+                if (selectedKingdomIdx < 0 || selectedKingdomIdx >= kingdoms.length) return;
+                pushHistory();
+                const k = kingdoms[selectedKingdomIdx];
+                const fields = {
+                    'k_id': 'id',
+                    'k_name': 'name',
+                    'k_race': 'original_actor_asset',
+                    'k_motto': 'motto',
+                    'k_created': 'created_time',
+                    'k_alliance': 'timestamp_alliance',
+                    'k_lastwar': 'timestamp_last_war',
+                    'k_conquest': 'timestamp_new_conquest',
+                    'k_rule': 'timestamp_king_rule',
+                    'k_timer': 'timer_new_king',
+                    'k_totalkings': 'total_kings',
+                    'k_bannerbg': 'banner_background_id',
+                    'k_bannericon': 'banner_icon_id',
+                    'k_color': 'color_id',
+                    'k_culture': 'id_culture',
+                    'k_language': 'id_language',
+                    'k_religion': 'id_religion',
+                    'k_moved': 'moved',
+                    'k_migrated': 'migrated',
+                    'k_deaths': 'total_deaths',
+                    'k_births': 'total_births',
+                    'k_kills': 'total_kills',
+                    'k_deathnat': 'deaths_natural',
+                    'k_deathfire': 'deaths_fire',
+                    'k_deathweapon': 'deaths_weapon',
+                    'k_deathdrown': 'deaths_drowning',
+                    'k_deathexpl': 'deaths_explosion',
+                    'k_renown': 'renown',
+                    'k_capital': 'capitalID',
+                    'k_lastcapital': 'last_capital_id',
+                    'k_kingid': 'kingID',
+                    'k_left': 'left',
+                    'k_origcolor': 'original_color_id'
+                };
+                Object.keys(fields).forEach(id => {
+                    const el = $(id);
+                    if (el) {
+                        let val = el.value;
+                        const field = fields[id];
+                        if (field !== 'name' && field !== 'motto' && field !== 'original_actor_asset') { val =
+                                parseFloat(val); if (isNaN(val)) val = 0 }
+                        k[field] = val;
+                    }
+                });
+                k.past_rulers = currentRulers.map(r => ({ ...r }));
+                k.total_kings = k.past_rulers.length;
+                renderKingdomList();
+                showStatus(`✓ 王国 #${selectedKingdomIdx+1} 已保存`, 'success');
+            }
+
+            function resetKingdomSelection() {
+                selectedKingdomIdx = -1;
+                kingdomEditForm.classList.add('hidden');
+                kingdomFormEmpty.classList.remove('hidden');
+                villageEditSection.classList.add('hidden');
+                renderKingdomList();
+                showStatus('已取消选择', 'info');
+            }
+
+            function renderVillageList() {
+                if (!villages.length) {
+                    villageListContainer.innerHTML =
+                        `<div class="empty-state"><i class="fa-regular fa-house"></i>未找到村庄数据</div>`;
+                    villageCount.textContent = '0 个';
+                    return;
+                }
+                let fv = villages;
+                if (!showAllVillages && selectedKingdomIdx !== -1 && kingdoms[selectedKingdomIdx]) {
+                    const kid = kingdoms[selectedKingdomIdx].id;
+                    fv = villages.filter(v => v.kingdomID === kid);
+                }
+                const q = villageSearchText.toLowerCase();
+                fv = fv.filter(v => { if (!q) return true; const n = (v.name || '').toLowerCase(); return n.includes(
+                    q) });
+                villageCount.textContent = `${fv.length} 个`;
+                if (!fv.length) {
+                    villageListContainer.innerHTML =
+                        `<div class="empty-state"><i class="fa-regular fa-filter-circle-xmark"></i>无匹配村庄</div>`;
+                    return;
+                }
+                const capitalSet = new Set();
+                kingdoms.forEach(k => { if (k.capitalID !== undefined && k.capitalID !== null) capitalSet.add(k
+                        .capitalID) });
+                let html = '';
+                fv.forEach((v) => {
+                    const vidx = villages.indexOf(v);
+                    const active = vidx === selectedVillageIdx ? 'active' : '';
+                    const leader = v.leaderID ? `村长:${v.leaderID}` : '无村长';
+                    const created = v.created_time !== undefined ? v.created_time : '?';
+                    const isCapital = capitalSet.has(v.id);
+                    html += `<div class="village-card ${active}" data-idx="${vidx}">
+                        <div class="card-content">
+                            <div class="name"><i class="fa-solid fa-house-chimney text-emerald-400 mr-1"></i> ${escapeHtml(v.name || '未命名')} <span class="text-xs text-gray-400 font-normal">#${v.id || vidx+1}</span>${isCapital ? '<span class="capital-badge">首都</span>' : ''}</div>
+                            <div class="sub">
+                                <span><i class="fa-regular fa-user mr-1"></i>${escapeHtml(leader)}</span>
+                                <span><i class="fa-regular fa-calendar mr-1"></i>成立：${escapeHtml(String(created))}</span>
+                                <span><i class="fa-regular fa-flag mr-1"></i>王国:${escapeHtml(String(v.kingdomID||'?'))}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+                villageListContainer.innerHTML = html;
+                villageListContainer.querySelectorAll('.village-card').forEach(card => {
+                    const idx = parseInt(card.dataset.idx);
+                    card.addEventListener('click', function() { selectVillage(idx) });
+                });
+                if (selectedVillageIdx === -1 && fv.length) selectVillage(villages.indexOf(fv[0]));
+                else if (selectedVillageIdx !== -1 && !villages[selectedVillageIdx]) { if (fv.length) selectVillage(
+                        villages.indexOf(fv[0])) }
+            }
+
+            function selectVillage(idx) {
+                if (idx < 0 || idx >= villages.length) return;
+                selectedVillageIdx = idx;
+                const v = villages[idx];
+                villageEditSection.classList.remove('hidden');
+                villageEditForm.classList.remove('hidden');
+                villageFormEmpty.classList.add('hidden');
+                const fields = {
+                    'v_id': 'id',
+                    'v_name': 'name',
+                    'v_race': 'original_actor_asset',
+                    'v_kingdomID': 'kingdomID',
+                    'v_leaderID': 'leaderID',
+                    'v_founder_id': 'founder_id',
+                    'v_founder_name': 'founder_name',
+                    'v_last_leader_id': 'last_leader_id',
+                    'v_last_kingdom_id': 'last_kingdom_id',
+                    'v_culture': 'id_culture',
+                    'v_language': 'id_language',
+                    'v_religion': 'id_religion',
+                    'v_moved': 'moved',
+                    'v_migrated': 'migrated',
+                    'v_deaths': 'total_deaths',
+                    'v_births': 'total_births',
+                    'v_kills': 'total_kills',
+                    'v_deathnat': 'deaths_natural',
+                    'v_deathfire': 'deaths_fire',
+                    'v_deathweapon': 'deaths_weapon',
+                    'v_deathdrown': 'deaths_drowning',
+                    'v_deathother': 'deaths_other',
+                    'v_renown': 'renown',
+                    'v_custom_name': 'custom_name',
+                    'v_name_culture_id': 'name_culture_id',
+                    'v_created_time': 'created_time',
+                    'v_food': 'total_food_consumed',
+                    'v_timer': 'timer_supply'
+                };
+                Object.keys(fields).forEach(id => {
+                    const el = $(id);
+                    if (el) {
+                        let val = v[fields[id]] !== undefined ? v[fields[id]] : '';
+                        if (id === 'v_custom_name') val = val ? 'true' : 'false';
+                        el.value = val;
+                    }
+                });
+                currentVillageRulers = (v.past_rulers || []).map(r => ({ ...r }));
+                renderVillageRulers();
+                currentVillagePastNames = (v.past_names || []).map(n => ({ ...n }));
+                renderVillagePastNames();
+                const eq = v.equipment || {};
+                currentEquipment = {
+                    item_storage_weapons: eq.item_storage_weapons || [],
+                    item_storage_helmets: eq.item_storage_helmets || [],
+                    item_storage_armor: eq.item_storage_armor || [],
+                    item_storage_boots: eq.item_storage_boots || [],
+                    item_storage_rings: eq.item_storage_rings || [],
+                    item_storage_amulets: eq.item_storage_amulets || []
+                };
+                renderEquipment();
+                currentZones = (v.zones || []).map(z => ({ x: z.x || 0, y: z.y || 0 }));
+                renderZones();
+                const res = (v.resources && v.resources.saved_resources) || [];
+                currentResources = res.map(r => ({ id: r.id, amount: r.amount || 0 }));
+                renderResources();
+                renderVillageList();
+                villageListContainer.querySelector('.village-card.active')?.scrollIntoView({ block: 'nearest' });
+                document.querySelectorAll('.actor-preview').forEach(el => { el.classList.remove('visible');
+                    el.innerHTML = '' });
+                document.querySelectorAll('.equip-preview').forEach(el => { el.classList.remove('visible');
+                    el.innerHTML = '' });
+            }
+
+            function renderEquipment() {
+                const types = { weapons: equipWeapons, helmets: equipHelmets, armor: equipArmor, boots: equipBoots,
+                    rings: equipRings, amulets: equipAmulets };
+                Object.keys(types).forEach(key => {
+                    const container = types[key];
+                    const arr = currentEquipment['item_storage_' + key] || [];
+                    if (!arr.length) { container.innerHTML = `<div class="text-xs text-gray-500 py-1">空</div>`;
+                        return }
+                    let html = '';
+                    arr.forEach((val, idx) => {
+                        html += `<div class="ruler-card" data-idx="${idx}" data-type="${key}">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="field"><label>ID</label><input type="number" class="equip-val" value="${val}" placeholder="ID"></div>
+                                <div class="field flex justify-end items-end"><button class="btn-sm danger equip-remove"><i class="fa-solid fa-trash-can"></i> 删除</button></div>
+                            </div>
+                        </div>`;
+                    });
+                    container.innerHTML = html;
+                    container.querySelectorAll('.ruler-card').forEach((div, idx) => {
+                        const inp = div.querySelector('.equip-val');
+                        inp.addEventListener('change', function() { const val = parseInt(this.value); if (!
+                                isNaN(val) && val >= 0) currentEquipment['item_storage_' + key][idx] =
+                                val });
+                        div.querySelector('.equip-remove').addEventListener('click', function() {
+                            currentEquipment['item_storage_' + key].splice(idx, 1);
+                            renderEquipment();
+                        });
+                    });
+                });
+            }
+
+            function renderZones() {
+                if (!currentZones.length) { zoneList.innerHTML = `<div class="text-xs text-gray-500 py-1">无区域</div>`;
+                    return }
+                let html = '';
+                currentZones.forEach((z, idx) => {
+                    html += `<div class="ruler-card" data-idx="${idx}">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div class="field"><label>X</label><input type="number" class="zone-x" value="${z.x}" placeholder="x"></div>
+                            <div class="field"><label>Y</label><input type="number" class="zone-y" value="${z.y}" placeholder="y"></div>
+                            <div class="field flex justify-end items-end"><button class="btn-sm danger zone-remove"><i class="fa-solid fa-trash-can"></i> 删除</button></div>
+                        </div>
+                    </div>`;
+                });
+                zoneList.innerHTML = html;
+                zoneList.querySelectorAll('.ruler-card').forEach((div, idx) => {
+                    const xInp = div.querySelector('.zone-x'),
+                        yInp = div.querySelector('.zone-y');
+                    const update = () => { const x = parseInt(xInp.value),
+                            y = parseInt(yInp.value); if (!isNaN(x) && !isNaN(y)) currentZones[idx] = { x,
+                            y } };
+                    xInp.addEventListener('change', update);
+                    yInp.addEventListener('change', update);
+                    div.querySelector('.zone-remove').addEventListener('click', function() {
+                        currentZones.splice(idx, 1);
+                        renderZones();
+                    });
+                });
+            }
+
+            function renderResources() {
+                if (!currentResources.length) { resourceList.innerHTML =
+                        `<div class="text-xs text-gray-500 py-1">无物资</div>`; return }
+                let html = '';
+                currentResources.forEach((res, idx) => {
+                    html += `<div class="ruler-card" data-idx="${idx}">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div class="field"><label>种类</label><input type="text" class="res-id" value="${escapeHtml(res.id)}" placeholder="id"></div>
+                            <div class="field"><label>数量</label><input type="number" class="res-amount" value="${res.amount}" placeholder="数量" min="0"></div>
+                            <div class="field flex justify-end items-end"><button class="btn-sm danger res-remove"><i class="fa-solid fa-trash-can"></i> 删除</button></div>
+                        </div>
+                    </div>`;
+                });
+                resourceList.innerHTML = html;
+                resourceList.querySelectorAll('.ruler-card').forEach((div, idx) => {
+                    const idInp = div.querySelector('.res-id'),
+                        amtInp = div.querySelector('.res-amount');
+                    const update = () => { const id = idInp.value.trim(),
+                            amt = parseInt(amtInp.value); if (id && !isNaN(amt) && amt >= 0)
+                            currentResources[idx] = { id, amount: amt } };
+                    idInp.addEventListener('change', update);
+                    amtInp.addEventListener('change', update);
+                    div.querySelector('.res-remove').addEventListener('click', function() {
+                        currentResources.splice(idx, 1);
+                        renderResources();
+                    });
+                });
+            }
+
+            function renderVillageRulers() {
+                if (!currentVillageRulers.length) {
+                    villageRulerList.innerHTML =
+                        `<div class="text-xs text-gray-500 py-1">无历代村长，点击 "添加" 增加</div>`;
+                    return;
+                }
+                let html = '';
+                currentVillageRulers.forEach((r, idx) => {
+                    html += `<div class="ruler-card" data-ridx="${idx}">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div class="field"><label>ID</label><input type="number" class="ruler-id" value="${r.id||''}" placeholder="ID"></div>
+                            <div class="field"><label>颜色</label><input type="number" class="ruler-color" value="${r.color_id||0}" placeholder="颜色"></div>
+                            <div class="field"><label>名称</label><input type="text" class="ruler-name" value="${escapeHtml(r.name||'')}" placeholder="名称"></div>
+                            <div class="field"><label>开始时间</label><input type="number" class="ruler-ago" value="${r.timestamp_ago||0}" placeholder="开始"></div>
+                            <div class="field"><label>结束时间</label><input type="number" class="ruler-end" value="${r.timestamp_end||0}" placeholder="结束"></div>
+                            <div class="field flex justify-end items-end"><button type="button" class="btn-sm danger remove-ruler"><i class="fa-solid fa-trash-can"></i> 删除</button></div>
+                        </div>
+                    </div>`;
+                });
+                villageRulerList.innerHTML = html;
+                villageRulerList.querySelectorAll('.ruler-card').forEach((card, idx) => {
+                    const idInp = card.querySelector('.ruler-id'),
+                        colorInp = card.querySelector('.ruler-color'),
+                        nameInp = card.querySelector('.ruler-name'),
+                        agoInp = card.querySelector('.ruler-ago'),
+                        endInp = card.querySelector('.ruler-end');
+                    const updateRuler = () => {
+                        const r = currentVillageRulers[idx];
+                        if (r) { r.id = parseInt(idInp.value) || 0;
+                            r.color_id = parseInt(colorInp.value) || 0;
+                            r.name = nameInp.value.trim() || '未知';
+                            r.timestamp_ago = parseFloat(agoInp.value) || 0;
+                            r.timestamp_end = parseFloat(endInp.value) || 0 }
+                    };
+                    [idInp, colorInp, nameInp, agoInp, endInp].forEach(inp => { inp.addEventListener('change',
+                            updateRuler);
+                        inp.addEventListener('input', updateRuler) });
+                    card.querySelector('.remove-ruler').addEventListener('click', function() {
+                        currentVillageRulers.splice(idx, 1);
+                        renderVillageRulers();
+                    });
+                });
+            }
+
+            function renderVillagePastNames() {
+                if (!currentVillagePastNames.length) {
+                    villagePastNameList.innerHTML =
+                        `<div class="text-xs text-gray-500 py-1">无历史名称，点击 "添加" 增加</div>`;
+                    return;
+                }
+                let html = '';
+                currentVillagePastNames.forEach((n, idx) => {
+                    html += `<div class="ruler-card" data-idx="${idx}">
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                            <div class="field"><label>名称</label><input type="text" class="past-name" value="${escapeHtml(n.name||'')}" placeholder="名称"></div>
+                            <div class="field"><label>时间</label><input type="number" class="past-timestamp" value="${n.timestamp||0}" placeholder="时间"></div>
+                            <div class="field"><label>颜色</label><input type="number" class="past-color" value="${n.color_id!==undefined?n.color_id:-1}" placeholder="颜色"></div>
+                            <div class="field"><label>自定义</label>
+                                <select class="past-custom"><option value="true" ${n.custom?'selected':''}>是</option><option value="false" ${!n.custom?'selected':''}>否</option></select>
+                            </div>
+                            <div class="field flex justify-end items-end"><button class="btn-sm danger remove-pastname"><i class="fa-solid fa-trash-can"></i> 删除</button></div>
+                        </div>
+                    </div>`;
+                });
+                villagePastNameList.innerHTML = html;
+                villagePastNameList.querySelectorAll('.ruler-card').forEach((div, idx) => {
+                    const nameInp = div.querySelector('.past-name'),
+                        timeInp = div.querySelector('.past-timestamp'),
+                        colorInp = div.querySelector('.past-color'),
+                        customSel = div.querySelector('.past-custom');
+                    const update = () => { const n = currentVillagePastNames[idx]; if (n) { n.name =
+                                nameInp.value.trim() || '未命名';
+                            n.timestamp = parseFloat(timeInp.value) || 0;
+                            n.color_id = parseInt(colorInp.value) || -1;
+                            n.custom = customSel.value === 'true' } };
+                    [nameInp, timeInp, colorInp, customSel].forEach(el => { el.addEventListener('change',
+                            update);
+                        el.addEventListener('input', update) });
+                    div.querySelector('.remove-pastname').addEventListener('click', function() {
+                        currentVillagePastNames.splice(idx, 1);
+                        renderVillagePastNames();
+                    });
+                });
+            }
+
+            function saveVillage() {
+                if (selectedVillageIdx < 0 || selectedVillageIdx >= villages.length) return;
+                pushHistory();
+                const v = villages[selectedVillageIdx];
+                const fields = {
+                    'v_id': 'id',
+                    'v_name': 'name',
+                    'v_race': 'original_actor_asset',
+                    'v_kingdomID': 'kingdomID',
+                    'v_leaderID': 'leaderID',
+                    'v_founder_id': 'founder_id',
+                    'v_founder_name': 'founder_name',
+                    'v_last_leader_id': 'last_leader_id',
+                    'v_last_kingdom_id': 'last_kingdom_id',
+                    'v_culture': 'id_culture',
+                    'v_language': 'id_language',
+                    'v_religion': 'id_religion',
+                    'v_moved': 'moved',
+                    'v_migrated': 'migrated',
+                    'v_deaths': 'total_deaths',
+                    'v_births': 'total_births',
+                    'v_kills': 'total_kills',
+                    'v_deathnat': 'deaths_natural',
+                    'v_deathfire': 'deaths_fire',
+                    'v_deathweapon': 'deaths_weapon',
+                    'v_deathdrown': 'deaths_drowning',
+                    'v_deathother': 'deaths_other',
+                    'v_renown': 'renown',
+                    'v_custom_name': 'custom_name',
+                    'v_name_culture_id': 'name_culture_id',
+                    'v_created_time': 'created_time',
+                    'v_food': 'total_food_consumed',
+                    'v_timer': 'timer_supply'
+                };
+                Object.keys(fields).forEach(id => {
+                    const el = $(id);
+                    if (el) {
+                        let val = el.value;
+                        const field = fields[id];
+                        if (field === 'custom_name') val = val === 'true';
+                        else if (field !== 'name' && field !== 'original_actor_asset' && field !==
+                            'founder_name') { val = parseFloat(val); if (isNaN(val)) val = 0 }
+                        v[field] = val;
+                    }
+                });
+                v.past_rulers = currentVillageRulers.map(r => ({ ...r }));
+                v.total_leaders = v.past_rulers.length;
+                v.past_names = currentVillagePastNames.map(n => ({ ...n }));
+                v.equipment = {
+                    item_storage_weapons: currentEquipment.item_storage_weapons,
+                    item_storage_helmets: currentEquipment.item_storage_helmets,
+                    item_storage_armor: currentEquipment.item_storage_armor,
+                    item_storage_boots: currentEquipment.item_storage_boots,
+                    item_storage_rings: currentEquipment.item_storage_rings,
+                    item_storage_amulets: currentEquipment.item_storage_amulets
+                };
+                v.zones = currentZones.map(z => ({ x: z.x, y: z.y }));
+                v.resources = { saved_resources: currentResources.map(r => ({ id: r.id, amount: r.amount })) };
+                renderVillageList();
+                showStatus(`✓ 村庄 #${selectedVillageIdx+1} 已保存`, 'success');
+            }
+
+            function resetVillageSelection() {
+                selectedVillageIdx = -1;
+                villageEditForm.classList.add('hidden');
+                villageFormEmpty.classList.remove('hidden');
+                renderVillageList();
+                showStatus('已取消选择', 'info');
+            }
+
+            function handleFile(file) {
+                if (!file) { showStatus('未选择文件', 'error'); return }
+                if (!file.name.toLowerCase().endsWith('.json')) { showStatus('请上传 .json 文件', 'error'); return }
+                progressOverlay.classList.remove('hidden');
+                progressBar.style.width = '0%';
+                progressPercent.textContent = '0';
+                progressSub.textContent = '读取文件...';
+                const reader = new FileReader();
+                reader.onprogress = function(e) {
+                    if (e.lengthComputable) { const pct = Math.round((e.loaded / e.total) * 80);
+                        progressBar.style.width = pct + '%';
+                        progressPercent.textContent = pct;
+                        progressSub.textContent = `读取中 ${pct}%` }
+                };
+                reader.onload = function(e) {
+                    progressSub.textContent = '解析数据...';
+                    progressBar.style.width = '85%';
+                    progressPercent.textContent = '85';
+                    setTimeout(() => {
+                        try {
+                            const json = JSON.parse(e.target.result);
+                            if (!json.items || !Array.isArray(json.items)) throw new Error(
+                                '缺少 items 数组，请确认是有效的世界盒子存档');
+                            saveData = json;
+                            kingdoms = json.kingdoms || [];
+                            if (!kingdoms.length && json.Kingdoms) kingdoms = json.Kingdoms;
+                            kingdoms.forEach(k => { if (!k.past_rulers) k.past_rulers = [];
+                                if (k.total_kings === undefined) k.total_kings = k.past_rulers
+                                .length });
+                            let vdata = json.cities || json.villages || json.Villages || json
+                            .village || [];
+                            if (vdata.length) { if (json.cities) villageKey = 'cities';
+                                else if (json.villages) villageKey = 'villages';
+                                else if (json.Villages) villageKey = 'Villages';
+                                else if (json.village) villageKey = 'village' } else villageKey =
+                                'cities';
+                            villages = vdata;
+                            villages.forEach(v => { if (!v.past_rulers) v.past_rulers = [];
+                                if (!v.past_names) v.past_names = [];
+                                if (v.total_leaders === undefined) v.total_leaders = v.past_rulers
+                                    .length;
+                                if (!v.equipment) v.equipment = {};
+                                if (!v.zones) v.zones = [];
+                                if (!v.resources) v.resources = { saved_resources: [] };
+                                if (!v.resources.saved_resources) v.resources
+                                .saved_resources = [] });
+                            actorsData = json.actors_data || [];
+                            itemsData = json.items || [];
+                            history = [];
+                            historyIndex = -1;
+                            selectedKingdomIdx = -1;
+                            selectedVillageIdx = -1;
+                            kingdomSearchText = '';
+                            kingdomSearch.value = '';
+                            villageSearchText = '';
+                            villageSearch.value = '';
+                            showAllVillages = false;
+                            showAllVillagesCheck.checked = false;
+                            fileNameDisplay.innerHTML =
+                                `<i class="fa-regular fa-file-lines mr-1"></i> ${escapeHtml(file.name)} (${kingdoms.length}个王国, ${villages.length}个村庄)`;
+                            fileNameDisplay.classList.add('text-indigo-400', 'font-semibold');
+                            fileBadge.textContent = file.name;
+                            loadedIcon.classList.remove('hidden');
+                            uploadSection.classList.add('hidden');
+                            editorContainer.classList.remove('hidden');
+                            editorContainer.classList.add('fade-in');
+                            renderKingdomList();
+                            renderVillageList();
+                            kingdomEditForm.classList.add('hidden');
+                            kingdomFormEmpty.classList.remove('hidden');
+                            villageEditForm.classList.add('hidden');
+                            villageFormEmpty.classList.remove('hidden');
+                            villageEditSection.classList.add('hidden');
+                            if (kingdoms.length) selectKingdom(0);
+                            progressBar.style.width = '100%';
+                            progressPercent.textContent = '100';
+                            progressSub.textContent = '加载完成';
+                            setTimeout(() => {
+                                progressOverlay.classList.add('hidden');
+                                showStatus(`✓ 加载成功！${kingdoms.length} 个王国, ${villages.length} 个村庄`,
+                                    'success');
+                            }, 300);
+                        } catch (err) {
+                            console.error(err);
+                            progressOverlay.classList.add('hidden');
+                            showStatus('解析失败: ' + err.message, 'error');
+                            fileInput.value = '';
+                        }
+                    }, 50);
+                };
+                reader.onerror = function() {
+                    progressOverlay.classList.add('hidden');
+                    showStatus('读取文件失败', 'error');
+                    fileInput.value = '';
+                };
+                reader.readAsText(file, 'UTF-8');
+            }
+
+            function downloadSave() {
+                if (!saveData) { showStatus('无存档数据', 'warning'); return }
+                saveData.kingdoms = kingdoms;
+                saveData[villageKey] = villages;
+                const data = JSON.stringify(saveData, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const name = fileBadge.textContent.replace('.json', '') || 'worldbox_save';
+                a.download = `${name}_modified.json`;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => { document.body.removeChild(a);
+                    URL.revokeObjectURL(url) }, 200);
+                showStatus('存档已开始下载', 'success');
+            }
+
+            function queryActor(id) {
+                if (!actorsData) return null;
+                return actorsData.find(a => a.id === parseInt(id));
+            }
+
+            function queryKingdom(id) {
+                if (!kingdoms) return null;
+                return kingdoms.find(k => k.id === parseInt(id));
+            }
+
+            function queryItem(id) {
+                if (!itemsData) return null;
+                return itemsData.find(it => it.id === parseInt(id));
+            }
+
+            function renderActorPreview(inputId, label) {
+                const container = $(`preview_${inputId}`);
+                if (!container) return;
+                const input = $(inputId);
+                if (!input) return;
+                const val = parseInt(input.value);
+                if (isNaN(val) || val < 0) {
+                    container.classList.remove('visible');
+                    container.innerHTML = '';
+                    return;
+                }
+                const actor = queryActor(val);
+                if (!actor) {
+                    container.classList.add('visible');
+                    container.innerHTML = `<span class="text-gray-400">没有这个属性</span>`;
+                    return;
+                }
+                container.classList.add('visible');
+                const name = actor.name || '未命名';
+                const asset = actor.asset_id || '?';
+                const hp = actor.health !== undefined ? actor.health : '?';
+                const x = actor.x || 0,
+                    y = actor.y || 0;
+                const traits = (actor.saved_traits && actor.saved_traits.length) ? actor.saved_traits.length : 0;
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 text-xs">
+                        <div><span class="label">关系</span><span class="val">${escapeHtml(label)}</span></div>
+                        <div><span class="label">ID</span><span class="val">${actor.id}</span></div>
+                        <div><span class="label">名称</span><span class="val">${escapeHtml(name)}</span></div>
+                        <div><span class="label">种族</span><span class="val">${escapeHtml(asset)}</span></div>
+                        <div><span class="label">生命</span><span class="val">${hp}</span></div>
+                        <div><span class="label">位置</span><span class="val">(${x}, ${y})</span></div>
+                        <div class="col-span-2"><span class="label">特质数</span><span class="val">${traits}</span></div>
+                    </div>
+                `;
+            }
+
+            function renderKingdomPreview(inputId) {
+                const container = $(`preview_${inputId}`);
+                if (!container) return;
+                const input = $(inputId);
+                if (!input) return;
+                const val = parseInt(input.value);
+                if (isNaN(val) || val < 0) {
+                    container.classList.remove('visible');
+                    container.innerHTML = '';
+                    return;
+                }
+                const kingdom = queryKingdom(val);
+                if (!kingdom) {
+                    container.classList.add('visible');
+                    container.innerHTML = `<span class="text-gray-400">没有这个属性</span>`;
+                    return;
+                }
+                container.classList.add('visible');
+                const name = kingdom.name || '未命名';
+                const asset = kingdom.original_actor_asset || '?';
+                const capital = kingdom.capitalID !== undefined ? kingdom.capitalID : '?';
+                const motto = kingdom.motto || '无';
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 text-xs">
+                        <div><span class="label">关系</span><span class="val">所属王国</span></div>
+                        <div><span class="label">ID</span><span class="val">${kingdom.id}</span></div>
+                        <div><span class="label">名称</span><span class="val">${escapeHtml(name)}</span></div>
+                        <div><span class="label">种族</span><span class="val">${escapeHtml(asset)}</span></div>
+                        <div><span class="label">首都</span><span class="val">${capital}</span></div>
+                        <div><span class="label">座右铭</span><span class="val">${escapeHtml(motto)}</span></div>
+                    </div>
+                `;
+            }
+
+            function renderItemPreviewForEquip(type) {
+                const container = $(`preview_${type}`);
+                if (!container) return;
+                const input = document.querySelector(`.equip-add-input[data-type="${type}"]`);
+                if (!input) return;
+                const val = parseInt(input.value);
+                if (isNaN(val) || val < 0) {
+                    container.classList.remove('visible');
+                    container.innerHTML = '';
+                    return;
+                }
+                const item = queryItem(val);
+                if (!item) {
+                    container.classList.add('visible');
+                    container.innerHTML = `<span class="text-gray-400">未找到物品</span>`;
+                    return;
+                }
+                container.classList.add('visible');
+                let typeLabel = '未知',
+                    matLabel = '';
+                if (item.asset_id) {
+                    const p = item.asset_id.split('_');
+                    if (p.length === 2) { typeLabel = TYPE_MAP[p[0]] || p[0];
+                        matLabel = MAT_MAP[p[1]] || p[1] } else { typeLabel = TYPE_MAP[p[0]] || p[0] }
+                }
+                const mods = (item.modifiers || []).map(m => {
+                    const match = m.match(/^([a-z]+)(\d+)?$/);
+                    if (match) { const nameMap = { power: '力量', truth: '诚信', protection: '保护', speed: '速度',
+                            balance: '协调', health: '健康', finesse: '技巧', mastery: '精通', knowledge: '学问',
+                            sharpness: '锋利', flame: '灼烧', ice: '冰冻', slowness: '减速', poison: '淬毒' };
+                        return (nameMap[match[1]] || match[1]) + (match[2] || '') } return m;
+                }).join(' · ');
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 text-xs">
+                        <div><span class="label">名称</span><div class="val">${escapeHtml(item.name||'无')}</div></div>
+                        <div><span class="label">种类</span><div class="val">${escapeHtml(typeLabel)}</div></div>
+                        <div><span class="label">材质</span><div class="val">${escapeHtml(matLabel||'无')}</div></div>
+                        <div><span class="label">制造者</span><div class="val">${escapeHtml(item.by||'无')}</div></div>
+                        <div><span class="label">国家</span><div class="val">${escapeHtml(item.from||'无')}</div></div>
+                        <div class="col-span-2"><span class="label">词条</span><div class="val">${escapeHtml(mods||'无')}</div></div>
+                    </div>
+                `;
+            }
+
+            fileInput.addEventListener('change', e => { if (e.target.files.length) handleFile(e.target.files[0]) });
+            dropZone.addEventListener('dragover', e => { e.preventDefault();
+                dropZone.style.borderColor = '#3b82f6';
+                dropZone.style.backgroundColor = '#1e293b' });
+            dropZone.addEventListener('dragleave', e => { e.preventDefault();
+                dropZone.style.borderColor = '#374151';
+                dropZone.style.backgroundColor = '#0f0f1a' });
+            dropZone.addEventListener('drop', e => {
+                e.preventDefault();
+                dropZone.style.borderColor = '#374151';
+                dropZone.style.backgroundColor = '#0f0f1a';
+                if (e.dataTransfer.files.length) { const f = e.dataTransfer.files[0]; if (f.name.toLowerCase()
+                        .endsWith('.json')) { fileInput.files = e.dataTransfer.files;
+                        handleFile(f) } else showStatus('请拖入 .json 文件', 'error') }
+            });
+
+            kingdomSearch.addEventListener('input', function() { kingdomSearchText = this.value;
+                renderKingdomList(); if (selectedKingdomIdx !== -1 && !kingdomFiltered.some(k => k._idx ===
+                        selectedKingdomIdx)) { if (kingdomFiltered.length) selectKingdom(kingdomFiltered[0]._idx);
+                    else { kingdomEditForm.classList.add('hidden');
+                        kingdomFormEmpty.classList.remove('hidden');
+                        villageEditSection.classList.add('hidden') } }
+                renderVillageList() });
+            villageSearch.addEventListener('input', function() { villageSearchText = this.value;
+                renderVillageList(); if (selectedVillageIdx !== -1) { const v = villages[selectedVillageIdx]; if (!v || (
+                        selectedKingdomIdx !== -1 && v.kingdomID !== kingdoms[selectedKingdomIdx].id)) { selectedVillageIdx =
+                            -1;
+                        villageEditForm.classList.add('hidden');
+                        villageFormEmpty.classList.remove('hidden') } } });
+            showAllVillagesCheck.addEventListener('change', function() { showAllVillages = this.checked;
+                renderVillageList(); if (selectedVillageIdx !== -1) { const v = villages[selectedVillageIdx]; if (!v || (!
+                        showAllVillages && selectedKingdomIdx !== -1 && v.kingdomID !== kingdoms[selectedKingdomIdx]
+                        .id)) { selectedVillageIdx = -1;
+                        villageEditForm.classList.add('hidden');
+                        villageFormEmpty.classList.remove('hidden') } } });
+
+            saveKingdomBtn.addEventListener('click', saveKingdom);
+            resetKingdomBtn.addEventListener('click', resetKingdomSelection);
+            addRulerBtn.addEventListener('click', function() { if (selectedKingdomIdx === -1) { showStatus(
+                        '请先选择一个王国', 'warning'); return } currentRulers.push({ id: 0, color_id: 0, name: '新国王',
+                        timestamp_ago: 0, timestamp_end: 0 });
+                renderRulers() });
+            saveVillageBtn.addEventListener('click', saveVillage);
+            resetVillageBtn.addEventListener('click', resetVillageSelection);
+            addVillageRulerBtn.addEventListener('click', function() { if (selectedVillageIdx === -1) { showStatus(
+                        '请先选择一个村庄', 'warning'); return } currentVillageRulers.push({ id: 0, color_id: 0, name: '新村长',
+                        timestamp_ago: 0, timestamp_end: 0 });
+                renderVillageRulers() });
+            addVillagePastNameBtn.addEventListener('click', function() { if (selectedVillageIdx === -1) { showStatus(
+                        '请先选择一个村庄', 'warning'); return } currentVillagePastNames.push({ name: '新名称', timestamp: 0,
+                        color_id: -1, custom: false });
+                renderVillagePastNames() });
+            document.querySelectorAll('.equip-add-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const type = this.dataset.type;
+                    const input = document.querySelector(`.equip-add-input[data-type="${type}"]`);
+                    if (!input) return;
+                    const val = parseInt(input.value);
+                    if (!isNaN(val) && val >= 0) { currentEquipment['item_storage_' + type].push(val);
+                        renderEquipment();
+                        input.value = '' } else showStatus('请输入有效的数字ID', 'warning');
+                });
+            });
+            document.querySelectorAll('.equip-lookup-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const type = this.dataset.type;
+                    renderItemPreviewForEquip(type);
+                });
+            });
+            document.querySelectorAll('.lookup-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.dataset.target;
+                    const type = this.dataset.type;
+                    if (type === 'actor') renderActorPreview(target, '生物');
+                    else if (type === 'kingdom') renderKingdomPreview(target);
+                    else showStatus('未知查询类型', 'warning');
+                });
+            });
+            addZoneBtn.addEventListener('click', function() { if (selectedVillageIdx === -1) { showStatus(
+                        '请先选择一个村庄', 'warning'); return } currentZones.push({ x: 0, y: 0 });
+                renderZones() });
+            addResourceBtn.addEventListener('click', function() { if (selectedVillageIdx === -1) { showStatus(
+                        '请先选择一个村庄', 'warning'); return } const id = resTypeSelect.value;
+                const amt = parseInt(resAmountInput.value) || 0; if (amt < 0) { showStatus('数量不能为负', 'warning');
+                    return } currentResources.push({ id, amount: amt });
+                renderResources();
+                resAmountInput.value = '1' });
+            addResourceConfirmBtn.addEventListener('click', function() { addResourceBtn.click() });
+            downloadBtn.addEventListener('click', downloadSave);
+
+            window.addEventListener('dragover', e => e.preventDefault());
+            window.addEventListener('drop', e => e.preventDefault());
+
+            renderKingdomList();
+            renderVillageList();
+            if (kingdoms.length) selectKingdom(0);
+        })();
+    </script>
+</body>
+</html>
